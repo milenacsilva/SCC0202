@@ -2,32 +2,7 @@
 #include <stdlib.h>
 #include <regex.h>
 #include <string.h>
-
-#define READLINE_BUFFER 4096
-
-char* readLine(FILE* stream) {
-    char *str = NULL;
-    int i = 0;
-    if (feof(stream))
-    return NULL;
-
-    do {
-        if (i % READLINE_BUFFER == 0) {
-            int j = (i / READLINE_BUFFER + 1) * READLINE_BUFFER;
-            str = (char* ) realloc(str, sizeof(char ) * j);
-        }
-        str[i] = fgetc(stream);
-        ++i;
-    } while (str[i-1] != '\n' && str[i-1] != EOF);
-
-    if (i <= 1)
-        return NULL;   // No caso se ter um \n no final da última linha do input
-
-    str = (char* ) realloc(str, sizeof(char ) * i); //Elimina o espaço adicional alocado
-    str[i-1] = '\0'; //Torna em uma string
-
-    return str;
-}
+#include "utils.h"
 
 char **parserReader(char *line, char *pattern, int *amountOfValues) {
     regex_t reg;
@@ -61,9 +36,12 @@ char **parserReader(char *line, char *pattern, int *amountOfValues) {
     return values;
 }
 
-// void freeValues(char **values) {
-
-// }
+void freeValues(char **values, int amountOfValues) {
+	for(int i = 0; i < amountOfValues; i++) {
+		free(values[i]);
+	}
+	free(values);
+}
 
 int main() {
     char *teste = readLine(stdin);
@@ -72,9 +50,8 @@ int main() {
     char **values = parserReader(teste, NULL, &amountOfValues);
     for (int i = 0; i < amountOfValues; ++i) {
         printf("%s\n", values[i]);
-        free(values[i]);
     }
 
-    free(values);
-    free(teste);
+	freeValues(values, amountOfValues);
+	free(teste);
 }
