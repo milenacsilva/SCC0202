@@ -63,7 +63,7 @@ char **get_values(char *line, char *pattern, int *amnt_values) {
     char **values = NULL;
 
     if (regex_compiler(&reg, pattern, REG_EXTENDED) == ERROR) {
-        fprintf(stderr, "Erro ao compilar expressão regular\n");
+        printf("Erro ao compilar expressão regular\n");
         exit(EXIT_FAILURE);
     }
     

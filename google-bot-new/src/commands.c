@@ -21,10 +21,7 @@ void insert_site(SLIST *s_list) {
         }
 
         SITE *site = site_init(values, amnt_values - 4);
-        if (slist_insert_sorted_site(s_list, site) == ERROR) {
-            printf("Erro ao inserir o site\n");
-        }
-        else {
+        if (site != NULL && slist_insert_sorted_site(s_list, site) == SUCCESS) {
             printf("Site adicionado com sucesso\n");
         }
         
@@ -41,10 +38,7 @@ void remove_site(SLIST *s_list) {
     char *tmp_key = read_line(stdin);
     int key = atoi(tmp_key);
 
-    if (slist_remove_site(s_list, key) == ERROR) {
-        printf("Erro ao remover site\n");
-    }
-    else {
+    if (slist_remove_site(s_list, key) == SUCCESS) {
         printf("Site removido com sucesso\n");
     }
 
@@ -60,10 +54,7 @@ void insert_keyword(SLIST *s_list) {
     char *tmp_keyword = read_line(stdin);
 
     SITE *site = slist_get_site(s_list, key);
-    if (site_insert_keyword(site, tmp_keyword) == ERROR) {
-        printf("Erro ao inserir palavra chave\n");
-    }
-    else {
+    if (site != NULL && site_insert_keyword(site, tmp_keyword) == SUCCESS) {
         printf("Palavra chave inserida com sucesso\n");
     }
 
@@ -79,12 +70,9 @@ void update_relevancy(SLIST *s_list) {
     printf("Qual é a nova relevância? ");
     char *tmp_relevancy = read_line(stdin);
     int relevancy = atoi(tmp_relevancy);
-
+    
     SITE *site = slist_get_site(s_list, key);
-    if (site_update_relevancy(site, relevancy) == ERROR) {
-        printf("Erro ao atualizar relevância\n");
-    }
-    else {
+    if (site !=  NULL && site_update_relevancy(site, relevancy) == SUCCESS) {
         printf("Relevância atualizada com sucesso\n");
     }
 

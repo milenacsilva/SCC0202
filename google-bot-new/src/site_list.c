@@ -82,12 +82,12 @@ boolean insert_sorted_node(NO **head, int index, SITE *site) {
 /* Função para inserir um novo site na lista de sites */
 boolean slist_insert_sorted_site(SLIST *s_list, SITE *site) {
     if (s_list == NULL || site == NULL) {
-        fprintf(stderr, "Erro ao inserir novo site: onjeto não inicializado\n");
+        printf("Erro ao inserir novo site: onjeto não inicializado\n");
         return ERROR;
     }
 
     if (s_list->amnt_sites > MAX_AMNT_SITES) {
-        fprintf(stderr, "Erro ao inserir novo site: lista cheia\n");
+        printf("Erro ao inserir novo site: lista cheia\n");
         return ERROR;
     }
 
@@ -95,12 +95,12 @@ boolean slist_insert_sorted_site(SLIST *s_list, SITE *site) {
     int index = get_index(s_list->primary_keys, new_key, 0, s_list->amnt_sites - 1, TO_INSERT);
 
     if (index == INVALID_INDEX) {
-        fprintf(stderr, "Erro ao inserir novo site: site já existente\n");
+        printf("Erro ao inserir novo site: site já existente\n");
         return ERROR;
     }
 
     if (insert_sorted_node(&s_list->head, index, site) != SUCCESS) {
-        fprintf(stderr, "Erro ao inserir novo site: não foi possível inserir novo nó a lista\n");
+        printf("Erro ao inserir novo site: não foi possível inserir novo nó a lista\n");
         return ERROR;
     }
 
@@ -142,19 +142,19 @@ boolean remove_node(SLIST *s_list, int index) {
 /* Função para remover um site da lista de sites */
 boolean slist_remove_site(SLIST *s_list, int key) {
     if (s_list == NULL) {
-        fprintf(stderr, "Erro ao remover site: objeto não inicializado\n");
+        printf("Erro ao remover site: objeto não inicializado\n");
         return ERROR;
     }
 
     int index = get_index(s_list->primary_keys, key, 0, s_list->amnt_sites - 1, TO_FIND);
     
     if (index == INVALID_INDEX) {
-        fprintf(stderr, "Erro ao remover site: chave não pertence à nenhum objeto da lista\n");
+        printf("Erro ao remover site: chave não pertence à nenhum objeto da lista\n");
         return ERROR;
     }
 
     if (remove_node(s_list, index) == ERROR) {
-        fprintf(stderr, "Erro ao remover site\n");
+        printf("Erro ao remover site\n");
         return ERROR;
     }
 
@@ -166,13 +166,13 @@ boolean slist_remove_site(SLIST *s_list, int key) {
 
 SITE *slist_get_site(SLIST *s_list, int key) {
     if (s_list == NULL) {
-        perror("Erro ao retornar site: objeto não inicializado\n");
+        printf("Erro ao retornar site: lista não inicializada\n");
         return NULL;
     }
 
     int index = get_index(s_list->primary_keys, key, 0, s_list->amnt_sites, TO_FIND);
     if (index == INVALID_INDEX) {
-        perror("Erro ao retornar o site: chave não existe\n");
+        printf("Erro ao retornar o site: chave não existe\n");
         return NULL;
     }
 
@@ -187,12 +187,13 @@ SITE *slist_get_site(SLIST *s_list, int key) {
 /* Função para printar a lista de sites */
 void slist_print(SLIST *s_list) {
     if (s_list == NULL) {
-     
-        perror("Erro ao imprimir a lista de sites: objeto não inicializado\n");
+        printf("Erro ao imprimir a lista: objeto não inicializado\n");
+        return;
     } 
 
     if (s_list->amnt_sites == 0) {
         printf("Lista de sites vazia\n");
+        return;
     }
 
     for (NO *aux = s_list->head; aux != NULL; aux = aux->next) {

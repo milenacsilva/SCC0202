@@ -27,33 +27,33 @@ int verify_values(char **values, int amnt_keywords) {
     int errors = 0;
 
     if (strlen(values[KEY]) > MAX_KEY_DIGTS) {
-        printf("Erro: chave primária acima do limite\n");
+        printf("Erro ao ler arquivo csv: chave primária acima do limite\n");
         ++errors;
     }
 
     if (strlen(values[NAME]) > MAX_NAME_LEN) {
-        printf("Erro: nome do site acima do limite\n");
+        printf("Erro ao ler arquivo csv: nome do site acima do limite\n");
         ++errors;
     }
 
     if (atoi(values[RELEVANCY]) > MAX_RELEVANCY || atoi(values[RELEVANCY]) < MIN_RELEVANCY) {
-        printf("Erro: relevância fora dos limites\n");       
+        printf("Erro ao ler arquivo csv: relevância fora dos limites\n");       
         ++errors; 
     }
 
     if (strlen(values[LINK]) > MAX_LINK_LEN) {
-        printf("Erro: link do site acima do limite\n");
+        printf("Erro ao ler arquivo csv: link do site acima do limite\n");
         ++errors;
     }
 
     if (amnt_keywords > MAX_KEYWORDS) {
-        printf("Erro: máximo de keywords atingido\n");
+        printf("Erro ao ler arquivo csv: máximo de keywords atingido\n");
         ++errors;
     }
 
     for (int i = KEYWORDS; i < amnt_keywords + KEYWORDS; ++i) {
         if (strlen(values[i]) > MAX_KEYWORD_LEN) {
-            printf("Erro: palavra-chave maior que o esperado\n");
+            printf("Erro ao ler arquivo csv: palavra-chave maior que o esperado\n");
             ++errors;
         }
     }
@@ -104,7 +104,7 @@ void site_delete(SITE **site) {
 /* Função que retorna a chave de um site */
 int site_get_key(SITE *site) {
     if (site == NULL) {
-        fprintf(stderr, "Erro ao acessar chave: objeto vazio\n");
+        printf("Erro ao acessar chave: objeto vazio\n");
         exit(EXIT_FAILURE);
     }
 
