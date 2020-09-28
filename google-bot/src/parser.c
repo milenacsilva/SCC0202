@@ -2,12 +2,36 @@
 #include <stdlib.h>
 #include <regex.h>
 #include <string.h>
-#include "utils.h"
 
-struct csvParser {
-	
+#include "utils.h"
+#include "parser.h"
+
+#define ERROR -32000
+struct _csvParser {
+    FILE *file_pointer;
+    HEADER header;
+    READER reader;
+    int amountOfValues; 
 };
 
+HEADER get_csvHeader();
+
+//TO-DO: Make a function to manage file
+CSVPARSER *csvParser_init(char *filename) {
+    CSVPARSER *parser = malloc(sizeof(CSVPARSER));
+    
+    if (!parser) return NULL;
+
+    parser->header = get_csvHeader();
+    parser->reader = parserReader;
+
+    return parser;
+}
+
+// Fazer uma struct para o reader
+READER csvParser_get_reader() 
+
+//TO-DO: Fazer uma função para lidar com o regex 
 char **parserReader(char *line, char *pattern, int *amountOfValues) {
     regex_t reg;
     regmatch_t match;
@@ -40,6 +64,7 @@ char **parserReader(char *line, char *pattern, int *amountOfValues) {
     return values;
 }
 
+/* This should be at utils.h */
 void freeValues(char **values, int amountOfValues) {
 	for(int i = 0; i < amountOfValues; i++) {
 		free(values[i]);

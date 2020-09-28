@@ -2,10 +2,12 @@
 	
 	#define _PARSER_H
 
+	#define HEADER char **
+
 	typedef char ** (*READER)(char *, char *, int *);
+	typedef struct _csvParser CSVPARSER; 
 
-
-	char **parserReader(char *line, char *pattern, int *amountOfValues);
+	CSVPARSER *csvParser_init(char *filename);
 	void freeValues(char **values, int amountOfValues);
 
 #endif
