@@ -17,54 +17,54 @@ struct _site {
     char *name;
     short relevancy;
     char *link;
-    char *keywords[MAX_KEYWORDS];
+    char **keywords;
     short amnt_keywords;
 };
 
 /* Função que verifica os valores de entradas para os sites, ou
 seja se estão dentro das especificações */
 int verify_values(char **values, int amnt_keywords) {
-    int errors = 0;
-
+    int flag = SUCCESS;
     if (strlen(values[KEY]) > MAX_KEY_DIGTS) {
         printf("Erro ao ler arquivo csv: chave primária acima do limite\n");
-        ++errors;
+        flag = ERROR;
     }
 
     if (strlen(values[NAME]) > MAX_NAME_LEN) {
         printf("Erro ao ler arquivo csv: nome do site acima do limite\n");
-        ++errors;
+        flag = ERROR;
     }
 
     if (atoi(values[RELEVANCY]) > MAX_RELEVANCY || atoi(values[RELEVANCY]) < MIN_RELEVANCY) {
         printf("Erro ao ler arquivo csv: relevância fora dos limites\n");       
-        ++errors; 
+        flag = ERROR;
+
     }
 
     if (strlen(values[LINK]) > MAX_LINK_LEN) {
         printf("Erro ao ler arquivo csv: link do site acima do limite\n");
-        ++errors;
+        flag = ERROR;
     }
 
     if (amnt_keywords > MAX_KEYWORDS) {
         printf("Erro ao ler arquivo csv: máximo de keywords atingido\n");
-        ++errors;
+        flag = ERROR;
     }
 
     for (int i = KEYWORDS; i < amnt_keywords + KEYWORDS; ++i) {
         if (strlen(values[i]) > MAX_KEYWORD_LEN) {
             printf("Erro ao ler arquivo csv: palavra-chave maior que o esperado\n");
-            ++errors;
+            flag = ERROR;
         }
     }
-
-    return errors;
+    return flag;
 }
 
 /* Função que inicializa a instância de um site */
 SITE *site_init(char **values, int amnt_keywords) {
     SITE *site = malloc(sizeof(SITE));
-    if (site == NULL) {
+    
+    if (site == NULL) { // Caso a site não seja inicializado
         return NULL; 
     }
 
@@ -74,6 +74,7 @@ SITE *site_init(char **values, int amnt_keywords) {
     site->link = strdup(values[LINK]);
     site->amnt_keywords = amnt_keywords;
 
+    site->keywords = malloc(sizeof(char*)*MAX_KEYWORDS);
     for (int i = 0; i < amnt_keywords; ++i) {
         site->keywords[i] = strdup(values[KEYWORDS + i]);
     }
@@ -83,7 +84,7 @@ SITE *site_init(char **values, int amnt_keywords) {
 
 /* Função para deletar a instância de um site */
 void site_delete(SITE **site) {
-    if (*site == NULL) {
+    if (*site == NULL) { // Caso o objeto não tenha sido incializado
         return;
     }
 
@@ -97,13 +98,16 @@ void site_delete(SITE **site) {
         free((*site)->keywords[i]);
         (*site)->keywords[i] = NULL;
     }
+    free((*site)->keywords);
+    (*site)->keywords = NULL;
     
     free(*site);
+    *site = NULL;
 }   
 
 /* Função que retorna a chave de um site */
 int site_get_key(SITE *site) {
-    if (site == NULL) {
+    if (site == NULL) { // Caso o usuário tenta acessar um site não inicializado
         printf("Erro ao acessar chave: objeto vazio\n");
         exit(EXIT_FAILURE);
     }
@@ -113,11 +117,11 @@ int site_get_key(SITE *site) {
 
 /* Função que adiciona uma nova keyword a um site */
 boolean site_insert_keyword(SITE *site, char *keyword) {
-    if (site == NULL) {
+    if (site == NULL) { // Caso o objeto não tenha sido incializado
         return ERROR;
     }
 
-    if (site->amnt_keywords == MAX_KEYWORDS) {
+    if (site->amnt_keywords == MAX_KEYWORDS) { // Caso já tenha sido atingido o máximo de palavras
         return ERROR;
     }
 
@@ -129,7 +133,7 @@ boolean site_insert_keyword(SITE *site, char *keyword) {
 
 /* Função que printa a instância de um site */
 void site_print(SITE *site) {
-    if (site == NULL) {
+    if (site == NULL) { // Caso o objeto não tenha sido incializado
         return;
     }
 
@@ -149,11 +153,11 @@ void site_print(SITE *site) {
 
 /* Função que atualiza a relevância de um site */
 boolean site_update_relevancy(SITE *site, int relevancy) {
-    if (site == NULL) {
+    if (site == NULL) { // Caso o objeto nã tenha sido inicializado
         return ERROR;
     }
 
-    if (relevancy > MAX_RELEVANCY || relevancy < MIN_RELEVANCY) {
+    if (relevancy > MAX_RELEVANCY || relevancy < MIN_RELEVANCY) { // Caso a referencia esteja fora dos paramêtros
         return ERROR;
     }
 

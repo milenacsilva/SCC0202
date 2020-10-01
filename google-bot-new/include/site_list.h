@@ -2,6 +2,8 @@
 #define SITES_LIST_H
 
 #define MAX_AMNT_SITES 100
+#define IS_IN_LIST 1
+#define NOT_IN_LIST 0
 
 #include "site.h"
 
