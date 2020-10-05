@@ -17,64 +17,66 @@ struct _site {
     char *name;
     short relevancy;
     char *link;
-    char *keywords[MAX_KEYWORDS];
+    char **keywords;
     short amnt_keywords;
 };
 
-// int verify_data_rows(char **data_row, int amnt_keywords) {
-//     int errors = 0;
+/* Função que verifica os valores de entradas para os sites, ou
+seja se estão dentro das especificações */
+int verify_values(char **values, int amnt_keywords) {
+    int flag = SUCCESS;
+    if (strlen(values[KEY]) > MAX_KEY_DIGTS) {
+        printf("Erro ao ler arquivo csv: chave primária acima do limite\n");
+        flag = ERROR;
+    }
 
-//     if (strlen(data_row[KEY]) > MAX_KEY_DIGTS) {
-//         perror("Erro: chave primária acima do limite\n");
-//         ++errors;
-//     }
+    if (strlen(values[NAME]) > MAX_NAME_LEN) {
+        printf("Erro ao ler arquivo csv: nome do site acima do limite\n");
+        flag = ERROR;
+    }
 
-//     if (strlen(data_row[NAME]) > MAX_NAME_LEN) {
-//         perror("Erro: nome do site acima do limite\n");
-//         ++errors;
-//     }
+    if (atoi(values[RELEVANCY]) > MAX_RELEVANCY || atoi(values[RELEVANCY]) < MIN_RELEVANCY) {
+        printf("Erro ao ler arquivo csv: relevância fora dos limites\n");       
+        flag = ERROR;
 
-//     if (atoi(data_row[RELEVANCY]) > MAX_RELEVANCY || atoi(data_row[RELEVANCY]) < MIN_RELEVANCY) {
-//         perror("Erro: relevância fora dos limites\n");       
-//         ++errors; 
-//     }
+    }
 
-//     if (strlen(data_row[LINK]) > MAX_LINK_LEN) {
-//         perror("Erro: link do site acima do limite\n");
-//         ++errors;
-//     }
+    if (strlen(values[LINK]) > MAX_LINK_LEN) {
+        printf("Erro ao ler arquivo csv: link do site acima do limite\n");
+        flag = ERROR;
+    }
 
-//     if (amnt_keywords > MAX_KEYWORDS) {
-//         perror("Erro: máximo de keywords atingido\n");
-//         ++errors;
-//     }
+    if (amnt_keywords > MAX_KEYWORDS) {
+        printf("Erro ao ler arquivo csv: máximo de keywords atingido\n");
+        flag = ERROR;
+    }
 
-//     for (int i = KEYWORDS; i < amnt_keywords + KEYWORDS; ++i) {
-//         if (strlen(data_row[i]) > MAX_KEYWORD_LEN) {
-//             perror("Erro: palavra-chave maior que o esperado\n");
-//             ++errors;
-//         }
-//     }
-
-//     return errors;
-// }
+    for (int i = KEYWORDS; i < amnt_keywords + KEYWORDS; ++i) {
+        if (strlen(values[i]) > MAX_KEYWORD_LEN) {
+            printf("Erro ao ler arquivo csv: palavra-chave maior que o esperado\n");
+            flag = ERROR;
+        }
+    }
+    return flag;
+}
 
 /* Função que inicializa a instância de um site */
-SITE *site_init(char **data_row, int amnt_keywords) {
+SITE *site_init(char **values, int amnt_keywords) {
     SITE *site = malloc(sizeof(SITE));
-    if (site == NULL) {
+    
+    if (site == NULL) { // Caso a site não seja inicializado
         return NULL; 
     }
 
-
-    site->key = atoi(data_row[KEY]);
-    site->name = strdup(data_row[NAME]);
-    site->relevancy = atoi(data_row[RELEVANCY]);
-    site->link = strdup(data_row[LINK]);
+    site->key = atoi(values[KEY]);
+    site->name = strdup(values[NAME]);
+    site->relevancy = atoi(values[RELEVANCY]);
+    site->link = strdup(values[LINK]);
     site->amnt_keywords = amnt_keywords;
 
+    site->keywords = malloc(sizeof(char*)*MAX_KEYWORDS);
     for (int i = 0; i < amnt_keywords; ++i) {
-        site->keywords[i] = strdup(data_row[KEYWORDS + i]);
+        site->keywords[i] = strdup(values[KEYWORDS + i]);
     }
 
     return site;
@@ -82,7 +84,7 @@ SITE *site_init(char **data_row, int amnt_keywords) {
 
 /* Função para deletar a instância de um site */
 void site_delete(SITE **site) {
-    if (*site == NULL) {
+    if (*site == NULL) { // Caso o objeto não tenha sido incializado
         return;
     }
 
@@ -96,14 +98,17 @@ void site_delete(SITE **site) {
         free((*site)->keywords[i]);
         (*site)->keywords[i] = NULL;
     }
+    free((*site)->keywords);
+    (*site)->keywords = NULL;
     
     free(*site);
+    *site = NULL;
 }   
 
 /* Função que retorna a chave de um site */
 int site_get_key(SITE *site) {
-    if (site == NULL) {
-        perror("Erro ao acessar chave: objeto vazio\n");
+    if (site == NULL) { // Caso o usuário tenta acessar um site não inicializado
+        printf("Erro ao acessar chave: objeto vazio\n");
         exit(EXIT_FAILURE);
     }
 
@@ -112,31 +117,47 @@ int site_get_key(SITE *site) {
 
 /* Função que adiciona uma nova keyword a um site */
 boolean site_insert_keyword(SITE *site, char *keyword) {
-    if (site == NULL) {
+    if (site == NULL) { // Caso o objeto não tenha sido incializado
         return ERROR;
     }
 
-    if (site->amnt_keywords == MAX_KEYWORDS) {
+    if (site->amnt_keywords == MAX_KEYWORDS) { // Caso já tenha sido atingido o máximo de palavras
         return ERROR;
     }
 
-    site->keywords[site->amnt_keywords] = keyword;
+    site->keywords[site->amnt_keywords] = strdup(keyword);
     ++site->amnt_keywords;
 
     return SUCCESS;
 }
 
+/* Função que printa a instância de um site */
 void site_print(SITE *site) {
-    printf("chave=%d\n", site->key);
+    if (site == NULL) { // Caso o objeto não tenha sido incializado
+        return;
+    }
+
+    printf("-----------------------\n");
+    printf("Chave: %d\n" 
+           "Nome: %s\n"
+           "Relevância: %d\n"
+           "Link: %s\n"
+           "Palavras-chave: ", site->key, site->name, site->relevancy, site->link);
+
+    for (int i = 0; i < site->amnt_keywords; ++i) {
+        printf("%s, ", site->keywords[i]);
+    }
+    putchar('\n');
+    printf("-----------------------\n");
 }
 
 /* Função que atualiza a relevância de um site */
 boolean site_update_relevancy(SITE *site, int relevancy) {
-    if (site == NULL) {
+    if (site == NULL) { // Caso o objeto nã tenha sido inicializado
         return ERROR;
     }
 
-    if (relevancy > MAX_RELEVANCY || relevancy < MIN_RELEVANCY) {
+    if (relevancy > MAX_RELEVANCY || relevancy < MIN_RELEVANCY) { // Caso a referencia esteja fora dos paramêtros
         return ERROR;
     }
 

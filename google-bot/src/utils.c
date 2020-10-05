@@ -5,45 +5,48 @@
 
 #include "utils.h"
 
+/* Função que lê uma linha de texto de um arquivo */
 char* read_line(FILE* stream) {
     char *str = NULL;
     int i = 0;
     
-    if (feof(stream))
+    if (feof(stream)) // Caso cehgue no fim do arquivo
         return NULL;
 
     do {
         if (i % READLINE_BUFFER == 0) {
             int j = (i / READLINE_BUFFER + 1) * READLINE_BUFFER;
-            str = (char* ) realloc(str, sizeof(char ) * j);
+            str = realloc(str, sizeof(char) * j);
         }
         str[i] = fgetc(stream);
         ++i;
     } while (str[i-1] != '\n' && str[i-1] != EOF);
 
-    if (i <= 1)
-        return NULL;   // No caso se ter um \n no final da última linha do input
+    if (i <= 1) { // No caso se ter um \n no final da última linha do input
+        free(str);
+        return NULL;   
+    }
 
-    str = (char* ) realloc(str, sizeof(char ) * i); //Elimina o espaço adicional alocado
+    str = realloc(str, sizeof(char) * i); //Elimina o espaço adicional alocado
     str[i-1] = '\0'; //Torna em uma string
 
     return str;
 }
 
-// pattern = "[,\\/]";
+/* Função que compila uma expressão regular e trata os erros */
 int regex_compiler(regex_t *reg, char *pattern, int flag) {
-    if (reg == NULL || pattern == NULL) {
+    if (reg == NULL || pattern == NULL) { // Caso os objetos não tenham sido inicializados
         return ERROR;
     }
 
-    if (regcomp(reg, pattern, 0) != 0) {
-        perror("Erro ao compilar expressão regular\n");
+    if (regcomp(reg, pattern, 0) != 0) { // Caso não consiga compilar
         return ERROR;
     }
 
     return SUCCESS;
 }
 
+/* Função que copia as palavra que dão match */ 
 char *regex_matcher(regex_t *reg, char *line, regmatch_t *match, int *start) { 
     if (regexec(reg, line, 1, match, REG_NOTBOL) != REG_NOERROR) {
         *start = -1;
@@ -54,53 +57,60 @@ char *regex_matcher(regex_t *reg, char *line, regmatch_t *match, int *start) {
     return strndup(line, match->rm_eo - 1);
 }
 
-char **get_data_row(char *line, char *pattern, int *amnt_values) {
+/* Função que os valores de uma linha dado um padrão, no nosso caso, será
+usado CSV (pattern = "[,\\/]") */
+char **get_values(char *line, char *pattern, int *amnt_values) {
     regex_t reg;
     regmatch_t match;
     char **values = NULL;
 
-    if (regex_compiler(&reg, pattern, REG_EXTENDED) == ERROR) {
-        exit(1);
+    if (regex_compiler(&reg, pattern, REG_EXTENDED) == ERROR) { // Se não conseguir compilar
+        printf("Erro ao compilar expressão regular\n");
+        exit(EXIT_FAILURE);
     }
     
-    int i = 0;
+   *amnt_values = 0;
     int start = 0;
-    do {
-        values = (char **) realloc(values, sizeof(char *) * (i + 1));
-        values[i] = regex_matcher(&reg, line + start, &match, &start);
-        ++i;
-    } while(start != -1);
 
-    *amnt_values = i;
-    regfree(&reg);
+    do { // Copia os valores que deram match
+        values = realloc(values, sizeof(char *) * (*amnt_values + 1));
+        values[*amnt_values] = regex_matcher(&reg, line + start, &match, &start);
+        *amnt_values += 1;
+    } while (start != -1);
+
+    regfree(&reg); 
 
     return values;
 }
 
+/* Função que da free em um vetor duplo de char contendo os valores */
+void free_values(char **values, int amnt_values) {
+    for (int i = 0; i < amnt_values; ++i) {
+        free(values[i]);
+        values[i] = NULL;
+    }
+    free(values);
+    values = NULL;
+}
+
+/* Função que abre um arquivo e trata erros na sua abertura */
 FILE *open_file(char *filename, char *flag) {
     FILE *fp = fopen(filename, flag);
 
-    if (fp == NULL) {
-        perror("Erro ao abrir o arquivo\n");
-        exit(1);
+    if (fp == NULL) { // Caso tenha algum erro ao abrir o arquivo
+        perror("Error: ");
+        exit(EXIT_FAILURE);
     }
 
     return fp;
 }
 
-int binary_search(int *arr, int key, int min, int max) {
-    if (max < min) {
-        return min;
-    }
+/* Função equivalente a readline para números */
+int read_num(FILE *stream) {
+    char *tmp_num = read_line(stream);
+    int num = atoi(tmp_num);
     
-    int mid = min + (max - min)/2; // Evita interger under/overflow
-    if (arr[mid] == key) {
-        return mid;
-    } 
+    free(tmp_num);
 
-    if (arr[mid] > key) {
-        return binary_search(arr, key, min, mid - 1);
-    } 
-    
-    return binary_search(arr, key, mid + 1, max); // Se a chave for maior 
-}
+    return num;
+} 

@@ -3,15 +3,21 @@
 
 #define READLINE_BUFFER 4096
 
-#define TRUE 1
-#define FALSE 0
+#define INVALID_INDEX -1 
 
 #define boolean int
 #define ERROR -1
 #define SUCCESS 0
 
+enum get_index_flags {
+    TO_INSERT,
+    TO_FIND
+};
+
 char* read_line(FILE* stream);
-char **get_data_row(char *line, char *pattern, int *amnt_values);
+char **get_values(char *line, char *pattern, int *amnt_values);
+void free_values(char **values, int amnt_values);
 FILE *open_file(char *filename, char *flag);
-int binary_search(int *arr, int key, int min, int max);
+int read_num(FILE *stream);
+
 #endif

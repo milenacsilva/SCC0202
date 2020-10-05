@@ -1,6 +1,5 @@
 # Paths for the files when not in current directory
-vpath %.c . src lib
-vpath %.o . src
+vpath %.c . src
 vpath %.h include
 
 CC = gcc
@@ -10,7 +9,7 @@ OUTPUT_OPTION = -o $@
 # Compilation related
 INCLUDES = -I ./include 
 CFLAGS =
-COMPILE.c = $(CC) $(DEBUGGING_OPTION) $(CFLAGS) $(INCLUDES) $(CPPFLAGS) $(TARGET_ARCH) -c 
+COMPILE.c = $(CC) $(DDEBUG) $(CFLAGS) $(INCLUDES) $(CPPFLAGS) $(TARGET_ARCH) -c 
 
 # Linking related
 LDLIBS =
@@ -18,7 +17,7 @@ LDFLAGS =
 LINK.o = $(CC) $(LDFLAGS) $(TARGET_ARCH)
 
 # Debugging option
-DEBUGGING_OPTION = 
+DDEBUG = 
 DEBUGER = valgrind
 DBFLAGS = --leak-check=full --show-leak-kinds=all\
 		  --track-origins=yes --verbose 
@@ -33,8 +32,6 @@ ARCHIVE_NAME = entrega.zip
 clean: $(MAIN)
 
 $(MAIN): main.o utils.o site.o site_list.o commands.o
-# $(MAIN): main.o utils.o
-
 #######################################
 
 ############ Pattern Rules ############# 
@@ -49,7 +46,7 @@ $(MAIN): main.o utils.o site.o site_list.o commands.o
 ############# Phony targets ############ 
 .PHONY: debug
 debug:
-	$(DEBUGER) $(DBFLAGS) ./$(MAIN) $(TEST_CASE) | grep "remove_node"
+	$(DEBUGER) $(DBFLAGS) ./$(MAIN) $(TEST_CASE)
 # If you want to add a test case: make debug TEST_CASE=test.txt
 
 .PHONY: clean

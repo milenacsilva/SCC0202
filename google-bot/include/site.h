@@ -22,4 +22,5 @@ int site_get_key(SITE *site);
 boolean site_insert_keyword(SITE *site, char *keyword);
 boolean site_update_relevancy(SITE *site, int relevancy);
 
+int verify_values(char **values, int amnt_keywords);
 #endif
