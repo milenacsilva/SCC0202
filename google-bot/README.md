@@ -8,4 +8,4 @@ Lourenço de Salles Roselino - **11796805**\
 Milena Corrêa da Silva - **11795401**
 
 ## Especificações
-Compílador GCC 7.5.0 com a flag -std=c99
+Compílador GCC 7.5.0 com as flags -std=c99 -Wall -Wextra -Werror -O1
