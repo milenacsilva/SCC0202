@@ -3,17 +3,22 @@
 
 #include "commands.h"
 
-/* Função que le um arquivo e insere no programa */
+// void start_bot(void) {
+
+// }
+
+/* Função que lê um arquivo e insere no programa */
 void insert_site(SLIST *s_list, char *filename) {
     FILE *f_in = open_file(filename, "r");
     int amnt_values;
     char *line;
 
-    while ((line = read_line(f_in)) != NULL) { // Loopa por todas as linhas do arquivo
+    while ((line = read_line(f_in)) != NULL) { // Itera por todas as linhas do arquivo
         char **values = get_values(line, "[,\\]", &amnt_values);
         
-        if (verify_values(values, amnt_values - 4) == SUCCESS) { // Caso tenha algum erro de formatação
-            SITE *site = site_init(values, amnt_values - 4);
+        int amnt_keywords = amnt_values - 4; // TODO: Comentario
+        if (verify_values(values, amnt_keywords) == SUCCESS) { // Caso tenha algum erro de formatação
+            SITE *site = site_init(values, amnt_keywords);
             if (site != NULL && slist_insert_sorted_site(s_list, site) == SUCCESS) {
                 printf("Site adicionado com sucesso\n");
             }
@@ -28,7 +33,7 @@ void insert_site(SLIST *s_list, char *filename) {
     fclose(f_in);
 }
 
-/* Função que deleta um site do programa */
+/* Função que remove um site do programa */
 void remove_site(SLIST *s_list, int key) {
     if (slist_remove_site(s_list, key) == SUCCESS) {
         printf("Site removido com sucesso\n");

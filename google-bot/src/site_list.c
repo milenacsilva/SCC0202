@@ -18,7 +18,7 @@ struct slist {
 SLIST *slist_init() {
     SLIST *s_list = malloc(sizeof(SLIST));
 
-    if (s_list ==  NULL) { // Caso de erro na malloc
+    if (s_list ==  NULL) { // Caso dê erro na malloc
         return NULL;
     }
 
@@ -34,7 +34,7 @@ void slist_delete(SLIST **s_list) {
         return;
     }
 
-    while ((*s_list)->head != NULL) { // Deleta cada nódulo da lista
+    while ((*s_list)->head != NULL) { // Deleta cada nó da lista
         NO *tmp_head = (*s_list)->head;
         (*s_list)->head = (*s_list)->head->next;
 
@@ -64,7 +64,7 @@ boolean insert_node(SLIST *s_list, SITE *site) {
         current_node = &(*current_node)->next;
     }
 
-    NO *new_node = malloc(sizeof(NO)); // Cria um novo nódulo
+    NO *new_node = malloc(sizeof(NO)); // Cria um novo nó
     if (new_node == NULL) {
         printf("Erro ao adicionar site: novo nó não inicializado\n");
         return ERROR;
@@ -79,7 +79,7 @@ boolean insert_node(SLIST *s_list, SITE *site) {
 
 /* Função para inserir um novo site na lista de sites */
 boolean slist_insert_sorted_site(SLIST *s_list, SITE *site) {
-    if (s_list == NULL || site == NULL) { // Caso alguns dos parametros passados não tenha sido inicializado 
+    if (s_list == NULL || site == NULL) { // Caso alguns dos parâmetros passados não tenha sido inicializado 
         printf("Erro ao inserir novo site: objeto não inicializado\n");
         return ERROR;
     }
@@ -102,8 +102,7 @@ boolean remove_node(SLIST *s_list, int key) {
     NO *last_node = NULL;
     NO *current_node = s_list->head;
   
-    int counter;
-    for (counter = 0; counter < s_list->amnt_sites; ++counter) { // Procura pela chave para remover
+    for (int i = 0; i < s_list->amnt_sites; ++i) { // Procura pela chave para remover
         if (site_get_key(current_node->site) == key) {
             break;
         }
@@ -111,7 +110,7 @@ boolean remove_node(SLIST *s_list, int key) {
         current_node = current_node->next;
     }
 
-    if (counter == s_list->amnt_sites) { // Caso não ache a chave
+    if (current_node == NULL) { // Caso não ache a chave
         printf("Erro ao remover site: chave não existe\n");
         return ERROR;
     } 
@@ -121,23 +120,18 @@ boolean remove_node(SLIST *s_list, int key) {
     NO *next_node = current_node->next;
     if (current_node == s_list->head) { // Caso for o primeiro elemento a ser deletado
         s_list->head = next_node;
-        
-        free(current_node);
     }
-
     else { // Caso seja os demias elementos 
-        free(current_node);
-
         last_node->next = next_node;
     }
 
-    current_node == NULL;
+    free(current_node);
     return SUCCESS;
 }
 
 /* Função para remover um site da lista de sites */
 boolean slist_remove_site(SLIST *s_list, int key) {
-    if (s_list == NULL) { // Caso não esteja inicializado
+    if (s_list == NULL) { 
         printf("Erro ao remover site: objeto não inicializado\n");
         return ERROR;
     }
@@ -156,18 +150,19 @@ SITE *slist_get_site(SLIST *s_list, int key) {
         return NULL;
     }
 
-    for (NO *aux = s_list->head; aux != NULL; aux = aux->next) {
-        if (site_get_key(aux->site) == key) {
-            return aux->site;
+    for (NO *curr = s_list->head; curr != NULL; curr = curr->next) {
+        if (site_get_key(curr->site) == key) {
+            return curr->site;
         }
     }
+
     printf("Site não encontrado\n");
     return NULL;
 }
 
 /* Função para printar a lista de sites */
 void slist_print(SLIST *s_list) {
-    if (s_list == NULL) { // Caso a lista esteja vazia
+    if (s_list == NULL) { 
         printf("Erro ao imprimir a lista: objeto não inicializado\n");
         return;
     } 
@@ -177,7 +172,7 @@ void slist_print(SLIST *s_list) {
         return;
     }
 
-    for (NO *aux = s_list->head; aux != NULL; aux = aux->next) { // Imprime os sites
-        site_print(aux->site);
+    for (NO *curr = s_list->head; curr != NULL; curr = curr->next) { // Imprime os sites
+        site_print(curr->site);
     }
 }

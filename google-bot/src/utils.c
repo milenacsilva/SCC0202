@@ -7,12 +7,12 @@
 
 /* Função que lê uma linha de texto de um arquivo */
 char* read_line(FILE* stream) {
+    if (feof(stream)) // Caso chegue no fim do arquivo
+        return NULL;    
+    
     char *str = NULL;
     int i = 0;
     
-    if (feof(stream)) // Caso cehgue no fim do arquivo
-        return NULL;
-
     do {
         if (i % READLINE_BUFFER == 0) {
             int j = (i / READLINE_BUFFER + 1) * READLINE_BUFFER;
@@ -27,8 +27,8 @@ char* read_line(FILE* stream) {
         return NULL;   
     }
 
-    str = realloc(str, sizeof(char) * i); //Elimina o espaço adicional alocado
-    str[i-1] = '\0'; //Torna em uma string
+    str = realloc(str, sizeof(char) * i); // Elimina o espaço adicional alocado
+    str[i-1] = '\0'; // Torna em uma string
 
     return str;
 }
@@ -46,7 +46,7 @@ int regex_compiler(regex_t *reg, char *pattern, int flag) {
     return SUCCESS;
 }
 
-/* Função que copia as palavra que dão match */ 
+/* Função que copia as palavras que dão match */ 
 char *regex_matcher(regex_t *reg, char *line, regmatch_t *match, int *start) { 
     if (regexec(reg, line, 1, match, REG_NOTBOL) != REG_NOERROR) {
         *start = -1;
@@ -57,7 +57,7 @@ char *regex_matcher(regex_t *reg, char *line, regmatch_t *match, int *start) {
     return strndup(line, match->rm_eo - 1);
 }
 
-/* Função que os valores de uma linha dado um padrão, no nosso caso, será
+/* Função que pega os valores de uma linha dado um padrão, no nosso caso, será
 usado CSV (pattern = "[,\\/]") */
 char **get_values(char *line, char *pattern, int *amnt_values) {
     regex_t reg;
@@ -69,7 +69,7 @@ char **get_values(char *line, char *pattern, int *amnt_values) {
         exit(EXIT_FAILURE);
     }
     
-   *amnt_values = 0;
+    *amnt_values = 0;
     int start = 0;
 
     do { // Copia os valores que deram match

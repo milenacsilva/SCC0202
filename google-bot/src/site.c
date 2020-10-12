@@ -22,7 +22,7 @@ struct _site {
 };
 
 /* Função que verifica os valores de entradas para os sites, ou
-seja se estão dentro das especificações */
+seja, se estão dentro das especificações */
 int verify_values(char **values, int amnt_keywords) {
     int flag = SUCCESS;
     if (strlen(values[KEY]) > MAX_KEY_DIGTS) {
@@ -35,10 +35,10 @@ int verify_values(char **values, int amnt_keywords) {
         flag = ERROR;
     }
 
-    if (atoi(values[RELEVANCY]) > MAX_RELEVANCY || atoi(values[RELEVANCY]) < MIN_RELEVANCY) {
+    int relevancy = atoi(values[RELEVANCY]);
+    if (relevancy > MAX_RELEVANCY || relevancy < MIN_RELEVANCY) {
         printf("Erro ao ler arquivo csv: relevância fora dos limites\n");       
         flag = ERROR;
-
     }
 
     if (strlen(values[LINK]) > MAX_LINK_LEN) {
@@ -64,7 +64,7 @@ int verify_values(char **values, int amnt_keywords) {
 SITE *site_init(char **values, int amnt_keywords) {
     SITE *site = malloc(sizeof(SITE));
     
-    if (site == NULL) { // Caso a site não seja inicializado
+    if (site == NULL) { // Caso o site não seja inicializado
         return NULL; 
     }
 
@@ -74,7 +74,7 @@ SITE *site_init(char **values, int amnt_keywords) {
     site->link = strdup(values[LINK]);
     site->amnt_keywords = amnt_keywords;
 
-    site->keywords = malloc(sizeof(char*)*MAX_KEYWORDS);
+    site->keywords = malloc(sizeof(char *) * MAX_KEYWORDS);
     for (int i = 0; i < amnt_keywords; ++i) {
         site->keywords[i] = strdup(values[KEYWORDS + i]);
     }
@@ -138,26 +138,29 @@ void site_print(SITE *site) {
     }
 
     printf("-----------------------\n");
-    printf("Chave: %d\n" 
-           "Nome: %s\n"
-           "Relevância: %d\n"
-           "Link: %s\n"
-           "Palavras-chave: ", site->key, site->name, site->relevancy, site->link);
-
+    printf("Chave: %d\n", site->key);
+    printf("Nome: %s\n", site->name);
+    printf("Relevância: %d\n", site->relevancy);
+    printf("Link: %s\n", site->link);
+    
+    printf("Palavras-chave: ");
     for (int i = 0; i < site->amnt_keywords; ++i) {
-        printf("%s, ", site->keywords[i]);
+        printf("%s", site->keywords[i]);
+        if (i != site->amnt_keywords - 1) {
+            printf(", ");
+        }
     }
-    putchar('\n');
-    printf("-----------------------\n");
+    printf("\n-----------------------\n");
 }
 
 /* Função que atualiza a relevância de um site */
 boolean site_update_relevancy(SITE *site, int relevancy) {
-    if (site == NULL) { // Caso o objeto nã tenha sido inicializado
+    if (site == NULL) { // Caso o objeto não tenha sido inicializado
         return ERROR;
     }
 
-    if (relevancy > MAX_RELEVANCY || relevancy < MIN_RELEVANCY) { // Caso a referencia esteja fora dos paramêtros
+    // Caso a referência esteja fora dos parâmetros
+    if (relevancy > MAX_RELEVANCY || relevancy < MIN_RELEVANCY) { 
         return ERROR;
     }
 
