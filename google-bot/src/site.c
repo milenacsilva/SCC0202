@@ -4,15 +4,14 @@
 
 #include "site.h"
 
-enum _data_columns {
+enum _data_columns { // Values indexes
     KEY,
     NAME,
     RELEVANCY,
     LINK,
     KEYWORDS
 };
-
-struct _site {
+struct _site { 
     short key;
     char *name;
     short relevancy;
@@ -21,9 +20,14 @@ struct _site {
     short amnt_keywords;
 };
 
-/* Função que verifica os valores de entradas para os sites, ou
-seja, se estão dentro das especificações */
-int verify_values(char **values, int amnt_keywords) {
+
+static int verify_values(char **values, int amnt_keywords);
+
+
+/*
+    Verifies if the values are within the site especifications
+*/
+static int verify_values(char **values, int amnt_keywords) {
     int flag = SUCCESS;
     if (strlen(values[KEY]) > MAX_KEY_DIGTS) {
         printf("Erro ao ler arquivo csv: chave primária acima do limite\n");
@@ -60,11 +64,17 @@ int verify_values(char **values, int amnt_keywords) {
     return flag;
 }
 
-/* Função que inicializa a instância de um site */
-SITE *site_init(char **values, int amnt_keywords) {
+/*
+    Initializes a site instance.
+*/
+SITE *site_init(char **values, int amnt_values) {
+    int amnt_keywords = amnt_values - 4;
+    if (verify_values(values, amnt_keywords) == ERROR) { // If there is any error with the values given
+        return NULL;
+    }
+
     SITE *site = malloc(sizeof(SITE));
-    
-    if (site == NULL) { // Caso o site não seja inicializado
+    if (site == NULL) { 
         return NULL; 
     }
 
@@ -82,9 +92,11 @@ SITE *site_init(char **values, int amnt_keywords) {
     return site;
 }
 
-/* Função para deletar a instância de um site */
+/*
+    Deletes an site instance.
+*/
 void site_delete(SITE **site) {
-    if (*site == NULL) { // Caso o objeto não tenha sido incializado
+    if (*site == NULL) {
         return;
     }
 
@@ -105,9 +117,11 @@ void site_delete(SITE **site) {
     *site = NULL;
 }   
 
-/* Função que retorna a chave de um site */
+/*
+    Returns the key of an site instance
+*/
 int site_get_key(SITE *site) {
-    if (site == NULL) { // Caso o usuário tenta acessar um site não inicializado
+    if (site == NULL) {
         printf("Erro ao acessar chave: objeto vazio\n");
         exit(EXIT_FAILURE);
     }
@@ -115,13 +129,15 @@ int site_get_key(SITE *site) {
     return site->key;
 }
 
-/* Função que adiciona uma nova keyword a um site */
+/*
+    Inserts an new keyword into an site instance. Returns -1 in case of error and 0 if the operation is a success.
+*/
 boolean site_insert_keyword(SITE *site, char *keyword) {
-    if (site == NULL) { // Caso o objeto não tenha sido incializado
+    if (site == NULL) {
         return ERROR;
     }
 
-    if (site->amnt_keywords == MAX_KEYWORDS) { // Caso já tenha sido atingido o máximo de palavras
+    if (site->amnt_keywords == MAX_KEYWORDS) {
         return ERROR;
     }
 
@@ -131,39 +147,63 @@ boolean site_insert_keyword(SITE *site, char *keyword) {
     return SUCCESS;
 }
 
-/* Função que printa a instância de um site */
-void site_print(SITE *site) {
-    if (site == NULL) { // Caso o objeto não tenha sido incializado
+/*
+    Prints the values of an site instance
+*/
+void site_print(SITE *site, FILE *f_out) {
+    if (site == NULL) { 
         return;
     }
 
-    printf("-----------------------\n");
-    printf("Chave: %d\n", site->key);
-    printf("Nome: %s\n", site->name);
-    printf("Relevância: %d\n", site->relevancy);
-    printf("Link: %s\n", site->link);
+    fprintf(f_out, "____________________________________\n");
+    fprintf(f_out, "Chave: %d\n", site->key);
+    fprintf(f_out, "Nome: %s\n", site->name);
+    fprintf(f_out, "Relevância: %d\n", site->relevancy);
+    fprintf(f_out, "Link: %s\n", site->link);
     
-    printf("Palavras-chave: ");
+    fprintf(f_out, "Palavras-chave: ");
     for (int i = 0; i < site->amnt_keywords; ++i) {
-        printf("%s", site->keywords[i]);
+        fprintf(f_out, "%s", site->keywords[i]);
         if (i != site->amnt_keywords - 1) {
-            printf(", ");
+            fprintf(f_out, ", ");
         }
     }
-    printf("\n-----------------------\n");
+    fprintf(f_out,"\n____________________________________\n");
+
 }
 
-/* Função que atualiza a relevância de um site */
+/*
+    Updates the relevância of an site instance
+*/
 boolean site_update_relevancy(SITE *site, int relevancy) {
-    if (site == NULL) { // Caso o objeto não tenha sido inicializado
+    if (site == NULL) {
         return ERROR;
     }
 
-    // Caso a referência esteja fora dos parâmetros
     if (relevancy > MAX_RELEVANCY || relevancy < MIN_RELEVANCY) { 
         return ERROR;
     }
 
     site->relevancy = relevancy;
     return SUCCESS;
+}
+
+/* 
+    Prints the information about a site in csv format
+*/
+void site_print_in_csv_format(SITE *site, FILE *f_out) {
+    if (site == NULL) {
+        return;
+    }
+
+    fprintf(f_out, "%d", site->key);
+    fprintf(f_out, ",%s", site->name);
+    fprintf(f_out, ",%d", site->relevancy);
+    fprintf(f_out, ",%s", site->link);
+
+    for (int i = 0; i < site->amnt_keywords; ++i) {
+        fprintf(f_out, ",%s", site->keywords[i]);
+    }
+
+    fprintf(f_out, "\n");
 }

@@ -30,8 +30,7 @@ ARCHIVE_NAME = entrega.zip
 
 ######## Your code here   #############
 clean: $(MAIN)
-
-$(MAIN): main.o utils.o site.o site_list.o commands.o
+$(MAIN): main.o utils.o site.o site_list.o mini_google_bot.o
 #######################################
 
 ############ Pattern Rules ############# 
