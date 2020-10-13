@@ -30,7 +30,6 @@ static int verify_values(char **values, int amnt_keywords);
 static int verify_values(char **values, int amnt_keywords) {
     int flag = SUCCESS;
     if (strlen(values[KEY]) > MAX_KEY_DIGTS) {
-		printf("%s\n\n", values[KEY]);
         printf("Erro ao ler arquivo csv: chave primária acima do limite\n");
         flag = ERROR;
     }
