@@ -90,8 +90,6 @@ SITE *site_init(char **values, int amnt_values) {
         site->keywords[i] = my_strdup(values[KEYWORDS + i]);
     }
 
-	site_print(site, stdout);
-
     return site;
 }
 
