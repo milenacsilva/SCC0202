@@ -228,7 +228,8 @@ void sitelist_print(SITELIST *s_list) {
     }
 
     for (NO *curr = s_list->head; curr != NULL; curr = curr->next) {
-        site_print(curr->site, stdin);
+		printf("teste\n");
+        site_print(curr->site, stdout);
     }
 }
 
