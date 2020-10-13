@@ -30,6 +30,11 @@ char* read_line(FILE* stream) {
         ++i;
     } while (str[i-1] != '\n' && str[i-1] != EOF);
 
+	if(i<2) {
+		free(str);
+		return NULL;
+	}
+
     str = realloc(str, sizeof(char) * i); // Removes extra allocated space
 
     str[i-1] = '\0'; 

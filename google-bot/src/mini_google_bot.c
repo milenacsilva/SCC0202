@@ -60,7 +60,7 @@ boolean mini_google_bot_run(MINI_GOOGLE_BOT *bot) {
         printf("\nO que você deseja fazer?\n");
         printf("1 - Inserir sites\n");
         printf("2 - Remover site\n");
-        printf("3 - Atualizar a referência de um site\n");
+        printf("3 - Atualizar a relevância de um site\n");
         printf("4 - Adicionar uma palavra-chave a um site\n");
         printf("5 - Mostrar banco de dados\n");
         printf("6 - Finalizar o programa\n");
