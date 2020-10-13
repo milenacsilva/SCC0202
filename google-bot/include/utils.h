@@ -7,7 +7,7 @@
 #define SUCCESS 0
 
 /* Parser patterns */
-#define CSV_PATTERN "[,\\/]"
+#define CSV_PATTERN "[,\\]"
 
 /* 
     Reads a line from a input file. 
@@ -24,6 +24,30 @@ char* read_line(FILE* stream);
     @param pattern regex pattern that separates the values
     @param amnt_values address to an `int` in order to store the amnt of values read by the parser 
 */
+
+/*
+	Implementation of strdup(3).
+	Both strdup and strndup are only declared on string.h in POSIX Systems and not standardized in C99
+	so a local implementation is necessary
+
+	Takes a string and returns a copy of it allocated with malloc
+
+	@param string pointer to the memory being copied
+*/
+char* my_strdup(const char* string);
+
+/*
+	Implementation of strndup(3).
+	Both strdup and strndup are only declared on string.h in POSIX Systems and not standardized in C99
+	so a local implementation is necessary
+
+	Takes a string and returns a copy of it allocated with malloc with at most n+1 bytes
+
+	@param string pointer to the memory being copied
+	@param n maximum amount of bytes to be copied
+*/
+char* my_strndup(const char* string, int n) ;
+
 char** parser_reader(char *line, char *pattern, int *amnt_values);
 
 /*

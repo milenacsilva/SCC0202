@@ -36,6 +36,42 @@ char* read_line(FILE* stream) {
     return str;
 }
 
+/*
+	Implementation of strdup(3).
+	Both strdup and strndup are only declared on string.h in POSIX Systems and not standardized in C99
+	so a local implementation is necessary
+
+	Takes a string and returns a copy of it allocated with malloc
+*/
+char* my_strdup(const char* string) {
+	int size = strlen(string)+1;
+	char* result = malloc(size);
+
+	if(result != NULL) {
+		memcpy(result, string, size);
+	}
+	return result;
+}
+
+/*
+	Implementation of strndup(3).
+	Both strdup and strndup are only declared on string.h in POSIX Systems and not standardized in C99
+	so a local implementation is necessary
+
+	Takes a string and returns a copy of it allocated with malloc with at most n+1 bytes
+*/
+char* my_strndup(const char* string, int n) {
+	int size = strlen(string)+1;
+	size = n < size ? n+1 : size;
+	char* result = malloc(size);
+
+	if(result != NULL) {
+		memcpy(result, string, size);
+		result[size-1] = '\0';
+	}
+	return result;
+}
+
 /* 
     Compiles a regular expression with a espeficied pattern and flag. 
     Returns -1 in case of error and 0 in case of SUCCESS.
@@ -58,11 +94,11 @@ static int regex_compiler(regex_t *reg, char *pattern, int flags) {
 static char* regex_matcher(regex_t *reg, char *line, regmatch_t *match, int *start) { 
     if (regexec(reg, line, 1, match, REG_NOTBOL) != REG_NOERROR) { // Copies the last block
         *start = -1;
-        return strdup(line);
+        return my_strdup(line);
     }
 
     *start += match->rm_eo;
-    return strndup(line, match->rm_eo - 1);
+    return my_strndup(line, match->rm_eo - 1);
 }
 
 /* 

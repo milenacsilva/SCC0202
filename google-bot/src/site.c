@@ -30,6 +30,7 @@ static int verify_values(char **values, int amnt_keywords);
 static int verify_values(char **values, int amnt_keywords) {
     int flag = SUCCESS;
     if (strlen(values[KEY]) > MAX_KEY_DIGTS) {
+		printf("%s\n\n", values[KEY]);
         printf("Erro ao ler arquivo csv: chave primária acima do limite\n");
         flag = ERROR;
     }
@@ -79,15 +80,17 @@ SITE *site_init(char **values, int amnt_values) {
     }
 
     site->key = atoi(values[KEY]);
-    site->name = strdup(values[NAME]);
+    site->name = my_strdup(values[NAME]);
     site->relevancy = atoi(values[RELEVANCY]);
-    site->link = strdup(values[LINK]);
+    site->link = my_strdup(values[LINK]);
     site->amnt_keywords = amnt_keywords;
 
     site->keywords = malloc(sizeof(char *) * MAX_KEYWORDS);
     for (int i = 0; i < amnt_keywords; ++i) {
-        site->keywords[i] = strdup(values[KEYWORDS + i]);
+        site->keywords[i] = my_strdup(values[KEYWORDS + i]);
     }
+
+	site_print(site, stdout);
 
     return site;
 }
@@ -141,7 +144,7 @@ boolean site_insert_keyword(SITE *site, char *keyword) {
         return ERROR;
     }
 
-    site->keywords[site->amnt_keywords] = strdup(keyword);
+    site->keywords[site->amnt_keywords] = my_strdup(keyword);
     ++site->amnt_keywords;
 
     return SUCCESS;

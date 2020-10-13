@@ -8,7 +8,7 @@ OUTPUT_OPTION = -o $@
 
 # Compilation related
 INCLUDES = -I ./include 
-CFLAGS =
+CFLAGS = -std=c99 -O1
 COMPILE.c = $(CC) $(DDEBUG) $(CFLAGS) $(INCLUDES) $(CPPFLAGS) $(TARGET_ARCH) -c 
 
 # Linking related
