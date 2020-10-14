@@ -1,3 +1,8 @@
+/*-------------------------------------------------------------*
+ |  /\_/\ 			  Trabalho feito por                /\_/\  |
+ | ( o.o )	    Milena Corrêa da Silva - 11795401      ( o.o ) |
+ |  > ^ <    Lourenço de Salles Roselino - 11796805     > ^ <  |
+ *-------------------------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
