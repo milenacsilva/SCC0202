@@ -24,7 +24,7 @@ DBFLAGS = --leak-check=full --show-leak-kinds=all\
 TEST_CASE = 
 
 # For ziping stuff
-FILES =
+FILES=src\ include\ test-cases\
 ARCHIVE_NAME = entrega.zip
 
 
@@ -32,6 +32,12 @@ ARCHIVE_NAME = entrega.zip
 clean: $(MAIN)
 $(MAIN): main.o utils.o site.o site_list.o mini_google_bot.o
 #######################################
+
+# For run.codes compiling
+all: $(MAIN)
+
+run:
+	./$(MAIN)
 
 ############ Pattern Rules ############# 
 %: %.o

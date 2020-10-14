@@ -12,7 +12,7 @@ Compílador GCC 7.5.0 com as flags -std=c99 -O1
 
 ## Instruções Para Uso
 
-Para realizar a compilação normal basta utilizar o comando "make", podendo utilizar também "make debug" para realizar execução com informaç~oes extras fornecidas pelo Valgrind, depois de compilado simplesmente executar e você será apresentado a seguinte tela incial:
+Para realizar a compilação normal basta utilizar o comando "make" ou "make all", depois para execução utiliza "make run", podendo utilizar também "make debug" para realizar execução com informações extras fornecidas pelo Valgrind, depois de executado você será apresentado a seguinte tela incial:
 ```
   +-------------------------------------------------+
   |               INCIANDO GOOGLE BOT...            |
