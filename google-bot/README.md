@@ -12,7 +12,9 @@ Compílador GCC 7.5.0 com as flags -std=c99 -O1
 
 ## Instruções Para Uso
 
-Para realizar a compilação normal basta utilizar o comando "make" ou "make all", depois para execução utiliza "make run", podendo utilizar também "make debug" para realizar execução com informações extras fornecidas pelo Valgrind, depois de executado você será apresentado a seguinte tela incial:
+Para realizar a compilação normal basta utilizar o comando `make` ou `make all`, depois para execução utiliza `make run`. É possível também utilizar `make debug` para realizar execução com informações de depuração extras fornecidas pelo _valgrind_.
+
+Depois de compilado e executado você será apresentado a seguinte tela incial:
 ```
   +-------------------------------------------------+
   |               INCIANDO GOOGLE BOT...            |
@@ -20,7 +22,8 @@ Para realizar a compilação normal basta utilizar o comando "make" ou "make all
   Arquivo de entrada: 
 ```
 
-O usuario pode inserir um arquivo de entrada customizado ou utilizar um dos que se encontram dentro da pasta test-cases. Inserido o nome do arquivo se entra no loop principal:
+## Execução e usabilidade
+Assim que o programa inicia, é pedido o nome do arquivo (.csv) de entrada de onde os primeiros sites do banco de dados seram lidos. Após isso, o usuário encrontra-se livre para fazer as seguintes operações:
 
 ```
 O que você deseja fazer?
@@ -32,17 +35,23 @@ O que você deseja fazer?
 6 - Finalizar o programa
 ```
 
+A seguir, disponibilizamos a tabela explicando cada uma das funções/operações disponveis:
+
 | Comando      | Função |
 | :---        |    :----: |
-| 1 - Inserir sites    | Permite a inserção de novos sites passado o nome de outro arquivo de entrada    |
-| 2 - Remover site   | Remove um único site passado sua chave     |
-| 3 - Atualizar a relevância de um site   | Modifica a relevância de um site passado a chave e um novo valor     |
-| 4 - Adicionar uma palavra-chave a um site   | Adciona uma nova palavra chave a um site passado a chave e a palavra chave, apenas se o site ainda não ultrapassou o limite     |
-| 5 - Mostrar banco de dados   | Comando que não foi pedido nas especificações do projeto, mas permite vizualização facil de todas as entradas no rpojeto     |
-| 6 - Finalizar o programa   | Finaliza o programa, dando a oportunidade do usuario salvar o estado atual do banco de dados     |
+| Inserir sites    | Permite a inserção de novos sites passado o nome de outro arquivo de entrada. Utilizamos um outro arquivo em vez do terminal para fazer com que a inserção de múltiplos sites de uma vez ocorra sem muita dificuldade. Além disso, ao pensarmos em uma implementação real, esse método pareceu mais viável.|
+| Remover site   | Remove um único site passado sua chave     |
+| Atualizar a relevância de um site   | Modifica a relevância de um site passado sua chave e um novo valor     |
+| Adicionar uma palavra-chave a um site   | Adiciona uma nova palavra chave a um site passado sua chave e a palavra chave a ser adicionada, apenas se o site ainda não ultrapassou o limite de palavras chave|
+| Mostrar banco de dados   | Comando que não foi pedido nas especificações do projeto, mas permite vizualização fácil de todas as entradas no projeto    |
+| Finalizar o programa   | Finaliza o programa, dando a oportunidade do usuario salvar o estado atual do banco de dados     |
 
 ## Justificativas
 
-No projeto foi utilizado Lista Encadeada Simples com inserção ordenada por ser mais eficiente em manter os sites ordenados, por consequencia, não utilizamos busca binaria por não ser possivel implementar ela nessa estrutura, logo utilizamos busca linear simples. Decidimos pedir como primeiro input um arquivo incial com os sites e manter como possibilidade a adição de arquivos extras no resto da execução. Além disso foi necessário adcionar nossas versões dos comandos strdup e strndup, já que esses não são padronizados pelo C99 mas são úteis para nossa implementação.
+No projeto foi utilizado **Lista Encadeada Simples** por ser mais eficiente no quesito de ordenação, já que não precisamos trocar todos os sites de lugar para fazer inserção ordenada (pedida nas especificações do projeto).Dito isso, para as outra operações envolvendo busca, foi utilizada uma **sequencial simples** devido a estrutura  escolhida. Nesse sentido, é possível perceber que chegamos em um impasse: a inserção na lista encadeada de maneira ordenada é mais eficiente, porém ao utilizar esse tipo de estrutura perdemos a possibilidade de usar uma busca binária. Numa futura remodelação do projeto, idealmente seria aplicado uma àrvore binária de busca para resolver esse dilema, porém como ainda não vimos esse método, decidimos focar na inserção de dados e, logo, na lista encadeada.
 
-Decidimos separar as funções em 4 duplas de arquivo: utils.h, site.h, commands.h e site_list.h. Site seria equivalente ao TAD item dos trabalhos anteriores, paralelamente, o site_list é equivalente a uma lista ligada, já o utils.h seriam funções genericas que não encaixariam nos grupos anteriores, além disso o commands une todos os comandos oferecidos pelo bot.
+Decidimos pedir como primeiro input um arquivo incial com os sites e manter como possibilidade a adição de arquivos extras no resto da execução para deixar mais "_user friendly_". Além disso, foi necessário adcionar nossas versões dos comandos strdup e strndup, já que esses não são padronizados pelo C99 mas são úteis para nossa implementação.
+
+## Modularização
+
+Separamos as funções em 4 duplas de arquivo: utils.h, site.h, commands.h e site_list.h. **site.h** seria equivalente ao **TAD item** dos trabalhos anteriores; o **site_list.h**, a implementação de uma lista ligada; o **utils.h** seriam funções genéricas que não encaixariam nos grupos anteriores, mas que seriam utilizados no decorrer do código (O.b.s.: é bom ressaltar que o intuito desse arquivo não é ser um TAD e sim um módulo de operações auxiliares); e o**mini_google_bot.h** que une todos os comandos oferecidos e a implementação do bot em si. Por fim, temos o arquivo **main.c** que apenas chama os comandos do bot
