@@ -38,7 +38,7 @@ O que você deseja fazer?
 A seguir, disponibilizamos a tabela explicando cada uma das funções/operações disponveis:
 
 | Comando      | Função | Complexidade |
-| :---        |    :----: |
+| :---        | --- |    :----: |
 | Inserir sites    | Permite a inserção de novos sites passado o nome de outro arquivo de entrada. Utilizamos um outro arquivo em vez do terminal para fazer com que a inserção de múltiplos sites de uma vez ocorra sem muita dificuldade. Além disso, ao pensarmos em uma implementação real, esse método pareceu mais viável.| (Inserção ordenada): O(n) |
 | Remover site   | Remove um único site passado sua chave     | (busca necessária): O(n) |
 | Atualizar a relevância de um site   | Modifica a relevância de um site passado sua chave e um novo valor     | (busca necessária): O(n) |
