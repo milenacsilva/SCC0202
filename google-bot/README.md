@@ -37,18 +37,18 @@ O que você deseja fazer?
 
 A seguir, disponibilizamos a tabela explicando cada uma das funções/operações disponveis:
 
-| Comando      | Função |
+| Comando      | Função | Complexidade |
 | :---        |    :----: |
-| Inserir sites    | Permite a inserção de novos sites passado o nome de outro arquivo de entrada. Utilizamos um outro arquivo em vez do terminal para fazer com que a inserção de múltiplos sites de uma vez ocorra sem muita dificuldade. Além disso, ao pensarmos em uma implementação real, esse método pareceu mais viável.|
-| Remover site   | Remove um único site passado sua chave     |
-| Atualizar a relevância de um site   | Modifica a relevância de um site passado sua chave e um novo valor     |
-| Adicionar uma palavra-chave a um site   | Adiciona uma nova palavra chave a um site passado sua chave e a palavra chave a ser adicionada, apenas se o site ainda não ultrapassou o limite de palavras chave|
+| Inserir sites    | Permite a inserção de novos sites passado o nome de outro arquivo de entrada. Utilizamos um outro arquivo em vez do terminal para fazer com que a inserção de múltiplos sites de uma vez ocorra sem muita dificuldade. Além disso, ao pensarmos em uma implementação real, esse método pareceu mais viável.| (Inserção ordenada): O(n) |
+| Remover site   | Remove um único site passado sua chave     | (busca necessária): O(n) |
+| Atualizar a relevância de um site   | Modifica a relevância de um site passado sua chave e um novo valor     | (busca necessária): O(n) |
+| Adicionar uma palavra-chave a um site   | Adiciona uma nova palavra chave a um site passado sua chave e a palavra chave a ser adicionada, apenas se o site ainda não ultrapassou o limite de palavras chave|  (busca necessária) : O(n) |
 | Mostrar banco de dados   | Comando que não foi pedido nas especificações do projeto, mas permite vizualização fácil de todas as entradas no projeto    |
 | Finalizar o programa   | Finaliza o programa, dando a oportunidade do usuario salvar o estado atual do banco de dados     |
 
 ## Justificativas
 
-No projeto foi utilizado **Lista Encadeada Simples** por ser mais eficiente no quesito de ordenação, já que não precisamos trocar todos os sites de lugar para fazer inserção ordenada (pedida nas especificações do projeto).Dito isso, para as outra operações envolvendo busca, foi utilizada uma **sequencial simples** devido a estrutura  escolhida. Nesse sentido, é possível perceber que chegamos em um impasse: a inserção na lista encadeada de maneira ordenada é mais eficiente, porém ao utilizar esse tipo de estrutura perdemos a possibilidade de usar uma busca binária. Numa futura remodelação do projeto, idealmente seria aplicado uma àrvore binária de busca para resolver esse dilema, porém como ainda não vimos esse método, decidimos focar na inserção de dados e, logo, na lista encadeada.
+No projeto foi utilizado **Lista Encadeada Simples** por ser mais eficiente no quesito de ordenação, já que não precisamos trocar todos os sites de lugar para fazer inserção ordenada (pedida nas especificações do projeto). Dito isso, para as outra operações envolvendo busca, foi utilizada uma **sequencial simples** devido a estrutura  escolhida. Nesse sentido, é possível perceber que chegamos em um impasse: a inserção na lista encadeada de maneira ordenada é mais eficiente, porém ao utilizar esse tipo de estrutura perdemos a possibilidade de usar uma busca binária. Numa futura remodelação do projeto, idealmente seria aplicado uma àrvore binária de busca para resolver esse dilema, porém como ainda não vimos esse método, decidimos focar na inserção de dados e, logo, na lista encadeada.
 
 Decidimos pedir como primeiro input um arquivo incial com os sites e manter como possibilidade a adição de arquivos extras no resto da execução para deixar mais "_user friendly_". Além disso, foi necessário adcionar nossas versões dos comandos strdup e strndup, já que esses não são padronizados pelo C99 mas são úteis para nossa implementação.
 
