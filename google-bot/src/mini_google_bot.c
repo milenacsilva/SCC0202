@@ -13,7 +13,8 @@ struct mini_google_bot {
     SITELIST *s_list;
 };
 
-static boolean insert_sites_from_file(SITELIST *s_list, char *filename);
+static boolean insert_sites_from_csv_file(SITELIST *s_list, char *filename);
+static void insert_sites_from_stdin(SITELIST *s_list);
 static void remove_site(SITELIST *s_list, int key);
 static void insert_keyword(SITELIST *s_list, int key);
 static void update_relevancy(SITELIST *s_list, int key);
@@ -47,7 +48,7 @@ boolean mini_google_bot_start(MINI_GOOGLE_BOT *bot) {
     printf("Arquivo de entrada: ");
 
     char *filename = read_line(stdin);
-    if (insert_sites_from_file(bot->s_list, filename) == ERROR) {
+    if (insert_sites_from_csv_file(bot->s_list, filename) == ERROR) {
         return ERROR;
     }
     free(filename);
@@ -57,13 +58,12 @@ boolean mini_google_bot_start(MINI_GOOGLE_BOT *bot) {
 
 /* 
     Runs the google bot.
-
-    @param bot instance of a mini google bot
 */
 boolean mini_google_bot_run(MINI_GOOGLE_BOT *bot) {
     while (TRUE) { 
-        printf("\nO que você deseja fazer?\n");
-        printf("1 - Inserir sites\n");
+        printf("\nO que você deseja fazer? (Digite o número equivalente ao comando)\n");
+        printf("0 - Inserir site manualmente\n");
+        printf("1 - Inserir sites a partir de um csv\n");
         printf("2 - Remover site\n");
         printf("3 - Atualizar a relevância de um site\n");
         printf("4 - Adicionar uma palavra-chave a um site\n");
@@ -71,10 +71,13 @@ boolean mini_google_bot_run(MINI_GOOGLE_BOT *bot) {
         printf("6 - Finalizar o programa\n");
      
         int option = read_line_num(stdin);
-        if (option == 1) {
+        if (option == 0) {
+            insert_sites_from_stdin(bot->s_list);
+        }
+        else if (option == 1) {
             printf("Arquivo de leitura: ");
             char *filename = read_line(stdin);
-            insert_sites_from_file(bot->s_list, filename);
+            insert_sites_from_csv_file(bot->s_list, filename);
             
             free(filename);
         } 
@@ -125,6 +128,7 @@ void mini_google_bot_stop(MINI_GOOGLE_BOT *bot) {
         free(filename);
         fclose(f_out);
     }
+    free(user_choice);
 }
 
 /*
@@ -142,9 +146,9 @@ void mini_google_bot_delete(MINI_GOOGLE_BOT **bot) {
 }
 
 /* 
-    Insert all sites upon reading a file.
+    Insert all sites upon reading a csv file.
 */
-static boolean insert_sites_from_file(SITELIST *s_list, char *filename) {
+static boolean insert_sites_from_csv_file(SITELIST *s_list, char *filename) {
     FILE *f_in = open_file(filename, "r");
     int amnt_values;
     char *line;
@@ -163,6 +167,48 @@ static boolean insert_sites_from_file(SITELIST *s_list, char *filename) {
 
     fclose(f_in);
     return SUCCESS;
+}
+
+/*
+    Inserts a new site manually, by readig from stdin 
+*/
+static void insert_sites_from_stdin(SITELIST *s_list) {
+    char *values[MAX_AMNT_VALUES] = {0};
+    
+    printf("Chave: ");
+    values[KEY] = read_line(stdin);
+    
+    printf("Nome: ");
+    values[NAME] = read_line(stdin);
+    
+    printf("Relevância (1-1000): ");
+    values[RELEVANCY] = read_line(stdin);
+    
+    printf("Link: ");
+    values[LINK] = read_line(stdin);
+    
+    int amnt_keywords;
+    while (TRUE) {
+        printf("Quantidade de palavras-chave: ");
+        amnt_keywords = read_line_num(stdin);
+        
+        if (amnt_keywords <= MAX_KEYWORDS) break;
+        printf("Valor inválido! Digite um número de 1 a 10\n/");
+    }
+ 
+    for (int i = 0; i < amnt_keywords; ++i) {
+        values[KEYWORDS + i] = read_line(stdin);
+    }
+
+    SITE *site = site_init(values, amnt_keywords + 4);
+    sitelist_insert_site(s_list, site);
+
+    for (int i = 0; i < MAX_AMNT_VALUES; ++i) {
+        if (values[i] != NULL) {
+            free(values[i]);
+            values[i] = NULL;
+        }
+    }
 }
 
 /*

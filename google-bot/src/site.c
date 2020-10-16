@@ -9,13 +9,6 @@
 
 #include "site.h"
 
-enum _data_columns { // Values indexes
-    KEY,
-    NAME,
-    RELEVANCY,
-    LINK,
-    KEYWORDS
-};
 struct _site { 
     short key;
     char *name;

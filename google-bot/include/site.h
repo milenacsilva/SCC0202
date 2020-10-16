@@ -9,8 +9,17 @@
 #define MAX_KEYWORD_LEN 50
 #define MAX_NAME_LEN 50
 #define MAX_LINK_LEN 100
+#define MAX_AMNT_VALUES 14
 
 #include "utils.h"
+
+typedef enum _data_columns { // Values indexes
+    KEY,
+    NAME,
+    RELEVANCY,
+    LINK,
+    KEYWORDS
+} DATA_COLUMNS;
 
 typedef struct _site SITE;
 
@@ -20,7 +29,7 @@ typedef struct _site SITE;
     @param values new site values
     @param amnt_values amount of values 
 */
-SITE *site_init(char **data_row, int amnt_keywords);
+SITE *site_init(char **values, int amnt_keywords);
 
 /*
     Deletes an site instance.
