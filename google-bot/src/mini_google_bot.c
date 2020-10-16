@@ -160,7 +160,9 @@ static boolean insert_sites_from_csv_file(SITELIST *s_list, char *filename) {
         if (site != NULL && sitelist_insert_site(s_list, site) == SUCCESS) {
             printf("Site adicionado com sucesso\n");
         }
-
+		else {
+			site_delete(&site);
+		}
         parser_free_values(values, amnt_values);
         free(line);
     }
