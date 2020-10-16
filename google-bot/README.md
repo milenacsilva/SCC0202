@@ -25,7 +25,7 @@ Depois de compilado e executado você será apresentado a seguinte tela incial:
 
 
 ## Execução e usabilidade
-Assim que o programa inicia, é pedido o nome do arquivo (.csv) de entrada de onde os primeiros sites do banco de dados seram lidos. Após isso, o usuário encrontra-se livre para fazer as seguintes operações:
+Assim que o programa inicia, é pedido o nome do arquivo (.csv) de entrada de onde os primeiros sites do banco de dados serão lidos. Após isso, o usuário encrontra-se livre para fazer as seguintes operações:
 
 ```
 O que você deseja fazer? (Digite o número equivalente ao comando)
@@ -38,7 +38,7 @@ O que você deseja fazer? (Digite o número equivalente ao comando)
 6 - Finalizar o programa
 ```
 
-A seguir, disponibilizamos a tabela explicando cada uma das funções/operações disponveis:
+A seguir, disponibilizamos a tabela explicando cada uma das funções/operações disponiveis:
 
 | Comando      | Função | Complexidade |
 | :---        | --- |    :----: |
@@ -48,14 +48,14 @@ A seguir, disponibilizamos a tabela explicando cada uma das funções/operaçõe
 | Atualizar a relevância de um site   | Modifica a relevância de um site passado sua chave e um novo valor     | (busca necessária): O(n) |
 | Adicionar uma palavra-chave a um site   | Adiciona uma nova palavra chave a um site passado sua chave e a palavra chave a ser adicionada, apenas se o site ainda não ultrapassou o limite de palavras chave|  (busca necessária) : O(n) |
 | Mostrar banco de dados   | Comando que não foi pedido nas especificações do projeto, mas permite vizualização fácil de todas as entradas no projeto    |
-| Finalizar o programa   | Finaliza o programa, dando a oportunidade do usuario salvar o estado atual do banco de dados     |
+| Finalizar o programa   | Finaliza o programa, dando a oportunidade do usuário salvar o estado atual do banco de dados     |
 
 
 ## Estruturas e justificativas
 
 No projeto foi utilizado **Lista Encadeada Simples** por ser mais eficiente no quesito de ordenação, já que não precisamos trocar todos os sites de lugar para fazer inserção ordenada (pedida nas especificações do projeto). Dito isso, para as outra operações envolvendo busca, foi utilizada uma **sequencial simples** devido a estrutura  escolhida. Nesse sentido, é possível perceber que chegamos em um impasse: a inserção na lista encadeada de maneira ordenada é mais eficiente, porém ao utilizar esse tipo de estrutura perdemos a possibilidade de usar uma busca binária. Numa futura remodelação do projeto, idealmente seria aplicado uma àrvore binária de busca para resolver esse dilema, porém como ainda não vimos esse método, decidimos focar na inserção de dados e, logo, na lista encadeada.
 
-Decidimos pedir como primeiro input um arquivo incial com os sites e manter como possibilidade a adição de arquivos extras no resto da execução para deixar mais "_user friendly_". Além disso, foi necessário adcionar nossas versões dos comandos strdup e strndup, já que esses não são padronizados pelo C99 mas são úteis para nossa implementação.
+Decidimos pedir como primeiro input um arquivo incial com os sites e manter como possibilidade a adição de arquivos extras no resto da execução para deixar mais "_user friendly_". Além disso, foi necessário adicionar nossas versões dos comandos strdup e strndup, já que esses não são padronizados pelo C99 mas são úteis para nossa implementação.
 
 ## Modularização
 
