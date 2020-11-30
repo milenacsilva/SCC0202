@@ -23,7 +23,6 @@ Depois de compilado e executado você será apresentado a seguinte tela incial:
   Arquivo de entrada: 
 ```
 
-
 ## Execução e usabilidade
 Assim que o programa inicia, é pedido o nome do arquivo (.csv) de entrada de onde os primeiros sites do banco de dados seram lidos. Após isso, o usuário encrontra-se livre para fazer as seguintes operações:
 

@@ -8,8 +8,6 @@
 #include <string.h>
 #include <regex.h>
 
-#define READLINE_BUFFER 4096 // Buffer to maximize realloc's effeciency
-
 #include "utils.h"
 
 static int regex_compiler(regex_t *reg, char *pattern, int flags);
@@ -27,8 +25,8 @@ char* read_line(FILE* stream) {
     int i = 0;
     
     do {
-        if (i % READLINE_BUFFER == 0) {
-            int j = (i / READLINE_BUFFER + 1) * READLINE_BUFFER;
+        if (i % BUFFER_SIZE == 0) {
+            int j = (i / BUFFER_SIZE + 1) * BUFFER_SIZE;
             str = realloc(str, sizeof(char) * j);
         }
         str[i] = fgetc(stream);
@@ -48,35 +46,35 @@ char* read_line(FILE* stream) {
 
 /*
 	Implementation of strdup(3).
-	Both strdup and strndup are only declared on string.h in POSIX Systems and not standardized in C99
+	Both strdup and strndup are only declared on str.h in POSIX Systems and not standardized in C99
 	so a local implementation is necessary
 
-	Takes a string and returns a copy of it allocated with malloc
+	Takes a str and returns a copy of it allocated with malloc
 */
-char* my_strdup(const char* string) {
-	int size = strlen(string)+1;
+char* my_strdup(const char* str) {
+	int size = strlen(str)+1;
 	char* result = malloc(size);
 
 	if(result != NULL) {
-		memcpy(result, string, size);
+		memcpy(result, str, size);
 	}
 	return result;
 }
 
 /*
 	Implementation of strndup(3).
-	Both strdup and strndup are only declared on string.h in POSIX Systems and not standardized in C99
+	Both strdup and strndup are only declared on str.h in POSIX Systems and not standardized in C99
 	so a local implementation is necessary
 
-	Takes a string and returns a copy of it allocated with malloc with at most n+1 bytes
+	Takes a str and returns a copy of it allocated with malloc with at most n+1 bytes
 */
-char* my_strndup(const char* string, int n) {
-	int size = strlen(string)+1;
+char* my_strndup(const char* str, int n) {
+	int size = strlen(str)+1;
 	size = n < size ? n+1 : size;
 	char* result = malloc(size);
 
 	if(result != NULL) {
-		memcpy(result, string, size);
+		memcpy(result, str, size);
 		result[size-1] = '\0';
 	}
 	return result;

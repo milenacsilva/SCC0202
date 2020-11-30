@@ -3,8 +3,20 @@
 
 /* Para notificar erros durante  execução */
 #define boolean int
+#define bool int
+#define string char*
+
+
+#define BUFFER_SIZE 4096 // Buffer to maximize realloc's effeciency
+
 #define ERROR -1
 #define SUCCESS 0
+
+#define FOUND 1
+#define NOT_FOUND 0
+
+#define TRUE 1
+#define FALSE 0
 
 /* Parser patterns */
 #define CSV_PATTERN "[,\\]"
@@ -17,14 +29,6 @@
 */
 char* read_line(FILE* stream);
 
-/* 
-    Parses the values of a line given a pattern.
-
-    @param line input line containing values
-    @param pattern regex pattern that separates the values
-    @param amnt_values address to an `int` in order to store the amnt of values read by the parser 
-*/
-
 /*
 	Implementation of strdup(3).
 	Both strdup and strndup are only declared on string.h in POSIX Systems and not standardized in C99
@@ -34,7 +38,7 @@ char* read_line(FILE* stream);
 
 	@param string pointer to the memory being copied
 */
-char* my_strdup(const char* string);
+char* my_strdup(const char* str);
 
 /*
 	Implementation of strndup(3).
@@ -46,8 +50,15 @@ char* my_strdup(const char* string);
 	@param string pointer to the memory being copied
 	@param n maximum amount of bytes to be copied
 */
-char* my_strndup(const char* string, int n) ;
+char* my_strndup(const char* str, int n) ;
 
+/* 
+    Parses the values of a line given a pattern.
+
+    @param line input line containing values
+    @param pattern regex pattern that separates the values
+    @param amnt_values address to an `int` in order to store the amnt of values read by the parser 
+*/
 char** parser_reader(char *line, char *pattern, int *amnt_values);
 
 /*

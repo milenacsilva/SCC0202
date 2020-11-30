@@ -9,7 +9,7 @@
 
 #include "site.h"
 
-struct _site { 
+struct _site_t { 
     short key;
     char *name;
     short relevancy;
@@ -62,16 +62,34 @@ static int verify_values(char **values, int amnt_keywords) {
     return flag;
 }
 
+static int comparator_function(const void *a, const void *b) {
+    return strcmp((string)a, (string)b); 
+}
+
+static bool binary_search(string *keywords, string key, int min, int max) {
+    if (min > max) return NOT_FOUND;
+
+    int mid = min + (max - min)/2;
+
+    if (strcmp(keywords[mid], key) == 0) return FOUND;
+
+    if (strcmp(keywords[mid], key) < 0)
+        return binary_search(keywords, key, mid + 1, max);
+    
+    return binary_search(keywords, key, min, mid - 1);
+}
+
+
 /*
     Initializes a site instance.
 */
-SITE *site_init(char **values, int amnt_values) {
+site_t *site_init(char **values, int amnt_values) {
     int amnt_keywords = amnt_values - 4;
     if (verify_values(values, amnt_keywords) == ERROR) { // If there is any error with the values given
         return NULL;
     }
 
-    SITE *site = malloc(sizeof(SITE));
+    site_t *site = malloc(sizeof(site_t));
     if (site == NULL) { 
         return NULL; 
     }
@@ -86,6 +104,7 @@ SITE *site_init(char **values, int amnt_values) {
     for (int i = 0; i < amnt_keywords; ++i) {
         site->keywords[i] = my_strdup(values[KEYWORDS + i]);
     }
+    qsort(site->keywords, site->amnt_keywords, sizeof(string), comparator_function);
 
     return site;
 }
@@ -93,11 +112,11 @@ SITE *site_init(char **values, int amnt_values) {
 /*
     Deletes an site instance.
 */
-void site_delete(SITE **site) {
+void site_delete(site_t **site) {
     if (*site == NULL) {
         return;
     }
-
+    
     free((*site)->name);
     (*site)->name = NULL;
     
@@ -118,7 +137,7 @@ void site_delete(SITE **site) {
 /*
     Returns the key of an site instance
 */
-int site_get_key(SITE *site) {
+int site_get_key(site_t *site) {
     if (site == NULL) {
         printf("Erro ao acessar chave: objeto vazio\n");
         exit(EXIT_FAILURE);
@@ -130,7 +149,7 @@ int site_get_key(SITE *site) {
 /*
     Inserts an new keyword into an site instance. Returns -1 in case of error and 0 if the operation is a success.
 */
-boolean site_insert_keyword(SITE *site, char *keyword) {
+boolean site_insert_keyword(site_t *site, char *keyword) {
     if (site == NULL) {
         return ERROR;
     }
@@ -142,38 +161,39 @@ boolean site_insert_keyword(SITE *site, char *keyword) {
     site->keywords[site->amnt_keywords] = my_strdup(keyword);
     ++site->amnt_keywords;
 
+    qsort(site->keywords, site->amnt_keywords, sizeof(string), comparator_function);
     return SUCCESS;
 }
 
 /*
     Prints the values of an site instance
 */
-void site_print(SITE *site, FILE *f_out) {
+void site_print(site_t *site, FILE *outfile) {
     if (site == NULL) { 
         return;
     }
 
-    fprintf(f_out, "____________________________________\n");
-    fprintf(f_out, "Chave: %d\n", site->key);
-    fprintf(f_out, "Nome: %s\n", site->name);
-    fprintf(f_out, "Relevância: %d\n", site->relevancy);
-    fprintf(f_out, "Link: %s\n", site->link);
+    fprintf(outfile, "____________________________________\n");
+    fprintf(outfile, "Chave: %d\n", site->key);
+    fprintf(outfile, "Nome: %s\n", site->name);
+    fprintf(outfile, "Relevância: %d\n", site->relevancy);
+    fprintf(outfile, "Link: %s\n", site->link);
     
-    fprintf(f_out, "Palavras-chave: ");
+    fprintf(outfile, "Palavras-chave: ");
     for (int i = 0; i < site->amnt_keywords; ++i) {
-        fprintf(f_out, "%s", site->keywords[i]);
+        fprintf(outfile, "%s", site->keywords[i]);
         if (i != site->amnt_keywords - 1) {
-            fprintf(f_out, ", ");
+            fprintf(outfile, ", ");
         }
     }
-    fprintf(f_out,"\n____________________________________\n");
+    fprintf(outfile,"\n____________________________________\n");
 
 }
 
 /*
     Updates the relevância of an site instance
 */
-boolean site_update_relevancy(SITE *site, int relevancy) {
+boolean site_update_relevancy(site_t *site, int relevancy) {
     if (site == NULL) {
         return ERROR;
     }
@@ -189,19 +209,52 @@ boolean site_update_relevancy(SITE *site, int relevancy) {
 /* 
     Prints the information about a site in csv format
 */
-void site_print_in_csv_format(SITE *site, FILE *f_out) {
+void site_print_in_csv_format(site_t *site, FILE *outfile) {
     if (site == NULL) {
         return;
     }
 
-    fprintf(f_out, "%d", site->key);
-    fprintf(f_out, ",%s", site->name);
-    fprintf(f_out, ",%d", site->relevancy);
-    fprintf(f_out, ",%s", site->link);
+    fprintf(outfile, "%d", site->key);
+    fprintf(outfile, ",%s", site->name);
+    fprintf(outfile, ",%d", site->relevancy);
+    fprintf(outfile, ",%s", site->link);
 
     for (int i = 0; i < site->amnt_keywords; ++i) {
-        fprintf(f_out, ",%s", site->keywords[i]);
+        fprintf(outfile, ",%s", site->keywords[i]);
     }
 
-    fprintf(f_out, "\n");
+    fprintf(outfile, "\n");
+}
+
+bool site_search_keyword(site_t *site, string keyword) {
+    if (site == NULL || keyword == NULL) {
+        printf("Erro ao procurar palavra chave no site: objeto não inicializado\n");
+        return ERROR;
+    }
+
+    return binary_search(site->keywords, keyword, 0, site->amnt_keywords - 1);
+}
+
+
+string* site_get_keywords(site_t *site){
+    if (site == NULL) {
+        printf("Erro ao pegar palavras chaves do site: objeto não inicializado\n");
+        return NULL;
+    }
+
+    return site->keywords;
+}
+
+int site_get_amnt_keywords(site_t *site) {
+    if (site == NULL) {
+        printf("Erro ao pegar quantidades de palavras do site: objeto não inicializado\n");
+        return ERROR;
+    }
+    return site->amnt_keywords;
+}
+
+int site_get_relevancy(site_t *site) {
+    if (site == NULL) return ERROR;
+
+    return site->relevancy;
 }
