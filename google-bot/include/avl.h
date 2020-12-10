@@ -2,110 +2,78 @@
 #define _AVL_H
 
 #include "site.h"
+#include "list.h"
 
-#define MAX_AMNT_SITES 1000
 
-typedef struct _avl_t avl_t;
+typedef struct avl  *Avl;
 
 typedef enum {
     PREORDER,
     INORDER,
     POSTORDER
-} printing_order;
+} PRINTING_ORDER;
 
 typedef enum {
     CSV,
     TERMINAL
-} printing_format;
+} PRINTING_FORMAT;
 
 /*
-    Initializes an binary search tree instance. 
-    Callers are responsible for `free()`ing it 
-    using `avl_delete()`
+    Initializes an `Avl` instance. Callers are responsible
+    for `free()`ing it using `avl_delete()`
 */
-avl_t *avl_init();
+Avl avl_init();
 
-/*
-    Inserts a new `site_t*` in the `avl_t*`
-
-    @param avl tree to insert the node on
-    @param site new site to be inserted
+/* 
+    Inserts a new `Site` in the `Avl`. 
 */
-bool avl_insert(avl_t *avl, site_t *site);
+bool avl_insert(Avl avl, Site site);
 
 /*
-    Searchs for a `key` in an `avl_t*` and returns 
+    Searchs for a `key` in an `Avl` and returns 
     if has found it or not.
-
-    @param avl tree to be searched on
-    @param key key to be found
 */
-bool avl_search(avl_t *avl, int key);
+bool avl_search(Avl avl, int key);
 
 /*
-    Prints an `avl_t*` instance
-
-    @param avl tree to be printed
-    @param order traversal printing order
-    @param format printing format
-    @param outfile pointer to outstream
+    Prints an `Avl` instance
 */
-void avl_print(avl_t *avl, printing_order order, printing_format format, FILE *outfile);
+void avl_print(Avl avl, PRINTING_ORDER order, PRINTING_FORMAT format, FILE *outfile);
 
 /*
-    Deletes an `avl_t*` instance.
-
-    @param avl address to the tree
-    @param delete_site if TRUE, deletes the `site_t*` in a node; if FALSE, does not
+    Deletes an `Avl` instance.
 */
-void avl_delete(avl_t **avl, bool delete_site);
+void avl_delete(Avl *avl, bool delete_site);
 
 /*
-    Deletes an `no_t*` containing a speficied
-    `key` from a `avl_t*`
-
-
-    @param avl address to an `avl_t*` instance
-    @param key key of the `site_t` to be deleted 
+    Deletes an `Node*` containing a specified
+    `key` from a `Avl`
 */
-bool avl_delete_site(avl_t *avl, int key);
+bool avl_delete_site(Avl avl, int key);
 
 /*
-    Returns the amount of sites in a `avl_t*`
-
-    @param avl tree instance
+    Returns the amount of sites in a `Avl`
 */
-int avl_get_amnt_sites(avl_t *avl);
+int avl_get_amnt_sites(Avl avl);
 
 /*
-    Searchs and returns the `site_t*`
+    Searchs and returns the `Site`
     (if it exists) given its `key` 
-
-    @param avl tree to be searched
-    @param key key of the site to be searched
 */
-site_t *avl_get_site(avl_t *avl, int key);
+Site avl_get_site(Avl avl, int key);
 
 /*
     Searchs for an `keyword` in a tree and 
-    returns a array of `site_t*` containing 
+    returns a array of `Site` containing 
     it.
-
-    @param avl tree to be searched
-    @param keyword keyword to be searched
-    @param amnt_matches address to an int storing the amount of matches
 */
-site_t** avl_search_keyword(avl_t *avl, string keyword, int *amnt_matches);
+SITELIST* avl_search_keyword(Avl avl, string keyword);
 
 /*
     Searchs for an `keyword` in a tree and 
-    returns a array of `site_t*` containing 
+    returns a array of `Site` containing 
     it.
-
-    @param avl tree to be searched
-    @param keyword keyword to be searched
-    @param amnt_matches address to an int storing the amount of matches
 */
-site_t** get_most_relevant_suggestions(avl_t *avl, string keyword, int max_amnt_suggestions);
+SITELIST* get_suggestions(Avl avl, string keyword, int max_amnt_suggestions);
 
 #endif

@@ -31,7 +31,7 @@ void sitelist_delete(SITELIST **s_list);
     @param s_list instance of a site list
     @param site new site to be inserted
 */
-boolean sitelist_insert_site(SITELIST *s_list, SITE *site);
+bool sitelist_insert_site(SITELIST *s_list, SITE *site);
 
 /*
     Removes an instance os an site from de list. Returns -1 for error and 0 for success.
@@ -39,7 +39,7 @@ boolean sitelist_insert_site(SITELIST *s_list, SITE *site);
     @param s_list instance of a site list
     @param key key of the site to remove
 */
-boolean sitelist_remove_site(SITELIST *s_list, int key);
+bool sitelist_remove_site(SITELIST *s_list, int key);
 
 /* 
     Returns an site instance for the site. 

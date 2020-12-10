@@ -8,39 +8,46 @@
 
 #include "mini_google_bot.h"
 #include "avl.h"
+#include "parser.h"
+#include "list.h"
+
 // #include "site_list.h"
 
 struct mini_google_bot {
-    avl_t *avl;
+    Avl avl;
 };
 
-static boolean insert_sites_from_csv_file(avl_t *avl, char *filename);
-static void insert_sites_from_stdin(avl_t *avl);
-static void remove_site(avl_t *avl, int key);
-static void insert_keyword(avl_t *avl, int key);
-static void update_relevancy(avl_t *avl, int key);
+static bool insert_sites_from_csv_file(Avl avl, string filename);
+static void insert_sites_from_stdin(Avl avl);
+static void remove_site(Avl avl, int key);
+static void insert_keyword(Avl avl, int key);
+static void update_relevancy(Avl avl, int key);
 
 /* 
     Insert all sites upon reading a csv file.
 */
-static boolean insert_sites_from_csv_file(avl_t *avl, char *filename) {
+static bool insert_sites_from_csv_file(Avl avl, string filename) {
     FILE *f_in = open_file(filename, "r");
     int amnt_values;
-    char *line;
+    
+    Reader reader = parser_reader_init(CSV_PATTERN);
+    string line;
 
-    while ((line = read_line(f_in)) != NULL) { // Loops through all lines/value pairs from file
-        char **values = parser_reader(line, CSV_PATTERN, &amnt_values);
-        
-        site_t *site = site_init(values, amnt_values);
+    while ((line = readline(f_in)) != NULL) { // Loops through all lines/value pairs from file
+        parser_read(reader,line);
+
+        Site site = site_init(reader->values, reader->amnt_values);
         if (site != NULL && avl_insert(avl, site) == SUCCESS) printf("Site adicionado com sucesso\n");
         else {
             printf("Erro ao adicionar o site\n");
             site_delete(&site);
         }
 
-        parser_free_values(values, amnt_values);
+        parser_clean_reader(reader);
         free(line);
     }
+
+    parser_reader_delete(&reader);
 
     fclose(f_in);
     return SUCCESS;
@@ -49,35 +56,35 @@ static boolean insert_sites_from_csv_file(avl_t *avl, char *filename) {
 /*
     Inserts a new site manually, by readig from stdin 
 */
-static void insert_sites_from_stdin(avl_t *avl) {
-    char *values[MAX_AMNT_VALUES] = {0};
+static void insert_sites_from_stdin(Avl avl) {
+    string values[MAX_AMNT_VALUES] = {0};
     
     printf("Chave: ");
-    values[KEY] = read_line(stdin);
+    values[KEY] = readline(stdin);
     
     printf("Nome: ");
-    values[NAME] = read_line(stdin);
+    values[NAME] = readline(stdin);
     
     printf("Relevância (1-1000): ");
-    values[RELEVANCY] = read_line(stdin);
+    values[RELEVANCY] = readline(stdin);
     
     printf("Link: ");
-    values[LINK] = read_line(stdin);
+    values[LINK] = readline(stdin);
     
     int amnt_keywords;
     while (TRUE) {
         printf("Quantidade de palavras-chave: ");
-        amnt_keywords = read_line_num(stdin);
+        amnt_keywords = readnum(stdin);
         
         if (amnt_keywords <= MAX_KEYWORDS) break;
         printf("Valor inválido! Digite um número de 1 a 10\n/");
     }
  
     for (int i = 0; i < amnt_keywords; ++i) {
-        values[KEYWORDS + i] = read_line(stdin);
+        values[KEYWORDS + i] = readline(stdin);
     }
 
-    site_t *site = site_init(values, amnt_keywords + 4);
+    Site site = site_init(values, amnt_keywords + 4);
     if (site != NULL && avl_insert(avl, site) == SUCCESS) printf("Site inserido com sucesso");
     else {
         printf("Erro ao adicionar o site\n");
@@ -95,7 +102,7 @@ static void insert_sites_from_stdin(avl_t *avl) {
 /*
     Removes an instance of a site
 */
-static void remove_site(avl_t *avl, int key) {
+static void remove_site(Avl avl, int key) {
     if (avl_delete_site(avl, key) == SUCCESS) printf("Site removido com sucesso\n");
     else printf("Erro ao remover site: site não encontrado\n");
     
@@ -104,11 +111,11 @@ static void remove_site(avl_t *avl, int key) {
 /*
     Adds an keyword to an existing site in a list
 */
-static void insert_keyword(avl_t *avl, int key) {
+static void insert_keyword(Avl avl, int key) {
     printf("Qual palavra chave gostaria de adicionar?");
-    char *keyword = read_line(stdin);
+    string keyword = readline(stdin);
 
-    site_t *site = avl_get_site(avl, key);
+    Site site = avl_get_site(avl, key);
     if (site != NULL && site_insert_keyword(site, keyword) == SUCCESS) printf("Palavra chave inserida com sucesso\n");
     else printf("Inserir palavra chave\n");
     
@@ -119,43 +126,39 @@ static void insert_keyword(avl_t *avl, int key) {
 /* 
     Updates the relevancy of an existing site in a list
 */
-static void update_relevancy(avl_t *avl, int key) {
+static void update_relevancy(Avl avl, int key) {
     printf("Qual é a nova relevância? ");
-    int relevancy = read_line_num(stdin);
+    int relevancy = readnum(stdin);
     
-    site_t *site = avl_get_site(avl, key);
+    Site site = avl_get_site(avl, key);
     if (site !=  NULL && site_update_relevancy(site, relevancy) == SUCCESS) printf("Relevância atualizada com sucesso\n");
     else printf("Erro ao atualizar relevância do site\n");
     
 }
 
-static void search_for_keyword(avl_t *avl) {
+static void search_for_keyword(Avl avl) {
     printf("Qual palavra chave deseja buscar? ");
-    string keyword = read_line(stdin);
+    string keyword = readline(stdin);
 
-    int amnt_matches;
-    site_t **matches = avl_search_keyword(avl, keyword, &amnt_matches);
+    SITELIST *matches = avl_search_keyword(avl, keyword);
 
-    if (amnt_matches == 0) printf("Nenhum site encontrado\n");
+   
+    printf("Os sites relativos a sua busca são\n");
+    sitelist_print(matches, 5);
 
-    for (int i = 0; i < amnt_matches; ++i) {
-        site_print(matches[i], stdout);
-    }
-
-    free(matches);
     free(keyword);
+    sitelist_delete(&matches);
 }
 
-static void get_site_sugestion(avl_t *avl) {
+static void get_site_sugestion(Avl avl) {
     printf("Qual é a palvra chave para efetuar a sugestão de sites? ");
-    string keyword = read_line(stdin);
+    string keyword = readline(stdin);
 
-    site_t **most_relevant = get_most_relevant_suggestions(avl, keyword, 5);
-    if (most_relevant != NULL) {
-        for (int i = 0; i < 5; ++i) site_print(most_relevant[i], stdout);
-    }
+    SITELIST *suggestions = get_suggestions(avl, keyword, 5);
+    sitelist_print(suggestions, 5);
 
-    free(most_relevant);
+
+    sitelist_delete(&suggestions);
     free(keyword);
 }
 
@@ -178,7 +181,7 @@ MINI_GOOGLE_BOT *mini_google_bot_init(void) {
 /* 
     Starts the google bot by reading from a csv file.
 */
-boolean mini_google_bot_start(MINI_GOOGLE_BOT *bot) {
+bool mini_google_bot_start(MINI_GOOGLE_BOT *bot) {
     if (bot == NULL) {
         printf("Erro ao incializar google bot: objeto vazio\n");
         return ERROR;
@@ -189,7 +192,7 @@ boolean mini_google_bot_start(MINI_GOOGLE_BOT *bot) {
     printf("+-------------------------------------------------+\n");
     printf("Arquivo de entrada: ");
 
-    char *filename = read_line(stdin);
+    string filename = readline(stdin);
     if (insert_sites_from_csv_file(bot->avl, filename) == ERROR) {
         return ERROR;
     }
@@ -201,7 +204,7 @@ boolean mini_google_bot_start(MINI_GOOGLE_BOT *bot) {
 /* 
     Runs the google bot.
 */
-boolean mini_google_bot_run(MINI_GOOGLE_BOT *bot) {
+bool mini_google_bot_run(MINI_GOOGLE_BOT *bot) {
     while (TRUE) { 
         printf("\nO que você deseja fazer? (Digite o número equivalente ao comando)\n");
         printf("0 - Inserir site manualmente\n");
@@ -214,30 +217,31 @@ boolean mini_google_bot_run(MINI_GOOGLE_BOT *bot) {
         printf("7 - Sugestão de sites\n");
         printf("8 - Finalizar o programa\n");
      
-        int option = read_line_num(stdin);
+        int option = readnum(stdin, .amnt_terminators=2,
+                                    .terminators=(int[]){'\n', EOF});
         if (option == 0) {
             insert_sites_from_stdin(bot->avl);
         }
         else if (option == 1) {
             printf("Arquivo de leitura: ");
-            char *filename = read_line(stdin);
+            string filename = readline(stdin);
             insert_sites_from_csv_file(bot->avl, filename);
             
             free(filename);
         } 
         else if (option == 2) {
             printf("Chave do site: ");
-            int key = read_line_num(stdin);
+            int key = readnum(stdin);
             remove_site(bot->avl, key);
         }
         else if (option == 3) {
             printf("Chave do site: ");
-            int key = read_line_num(stdin);
+            int key = readnum(stdin);
             update_relevancy(bot->avl, key);
         }
         else if (option == 4) {
             printf("Chave do site: ");
-            int key = read_line_num(stdin);
+            int key = readnum(stdin);
             insert_keyword(bot->avl, key);
         }
         else if (option == 5) {
@@ -266,11 +270,11 @@ void mini_google_bot_stop(MINI_GOOGLE_BOT *bot) {
     printf("|            FINALIZANDO GOOGLE BOT...            |\n");
     printf("+-------------------------------------------------+\n");
     printf("Deseja salvar o atual lista de sites[y/n]: ");
-    char *user_choice = read_line(stdin);
+    string user_choice = readline(stdin);
     
     if (user_choice[0] == 'y') {
         printf("Arquivo de saída: ");
-        char *filename = read_line(stdin);
+        string filename = readline(stdin);
 
         FILE *f_out = open_file(filename, "a+");
         avl_print(bot->avl, INORDER, CSV, f_out);
@@ -294,4 +298,5 @@ void mini_google_bot_delete(MINI_GOOGLE_BOT **bot) {
     free(*bot);
     *bot = NULL;
 }
+
 

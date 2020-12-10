@@ -15,14 +15,14 @@ MINI_GOOGLE_BOT *mini_google_bot_init(void);
 
     @param bot mini google bot instance
 */
-boolean mini_google_bot_start(MINI_GOOGLE_BOT *bot);
+bool mini_google_bot_start(MINI_GOOGLE_BOT *bot);
 
 /* 
     Runs the google bot.
 
     @param bot instance of a mini google bot
 */
-boolean mini_google_bot_run(MINI_GOOGLE_BOT *bot);
+bool mini_google_bot_run(MINI_GOOGLE_BOT *bot);
 
 /*
     Stops the mini google bot

@@ -20,8 +20,8 @@ struct sitelist {
 };
 
 
-static boolean insert_node(SITELIST *s_list, SITE *site);
-static boolean remove_node(SITELIST *s_list, int key);
+static bool insert_node(SITELIST *s_list, SITE *site);
+static bool remove_node(SITELIST *s_list, int key);
 static NO *pop_node(SITELIST *s_list, int key);
 
 
@@ -65,7 +65,7 @@ void sitelist_delete(SITELIST **s_list) {
 /*
     Inserts an ordered node.
 */
-static boolean insert_node(SITELIST *s_list, SITE *site) {
+static bool insert_node(SITELIST *s_list, SITE *site) {
     NO **last_node = NULL;
     NO **current_node = &(s_list->head);
 
@@ -98,7 +98,7 @@ static boolean insert_node(SITELIST *s_list, SITE *site) {
     Inserts an site in the list. Returns -1 for error and 0 for success.
     Callers cannot free the site instansce alone after inserting it.
 */
-boolean sitelist_insert_site(SITELIST *s_list, SITE *site) {
+bool sitelist_insert_site(SITELIST *s_list, SITE *site) {
     if (s_list == NULL || site == NULL) {  
         printf("Erro ao inserir novo site: objeto não inicializado\n");
         return ERROR;
@@ -120,7 +120,7 @@ boolean sitelist_insert_site(SITELIST *s_list, SITE *site) {
 /*
     Removes a node of an site list.
 */
-static boolean remove_node(SITELIST *s_list, int key) {
+static bool remove_node(SITELIST *s_list, int key) {
     NO *last_node = NULL;
     NO *current_node = s_list->head;
 
@@ -184,7 +184,7 @@ static NO *pop_node(SITELIST *s_list, int key) {
 /*
     Removes an instance os an site from de list. Returns -1 for error and 0 for success.
 */
-boolean sitelist_remove_site(SITELIST *s_list, int key) {
+bool sitelist_remove_site(SITELIST *s_list, int key) {
     if (s_list == NULL) { 
         printf("Erro ao remover site: objeto não inicializado\n");
         return ERROR;
@@ -286,3 +286,8 @@ int sitelist_is_empty(SITELIST *s_list) {
     return FALSE;
 }
 
+int sitelis_get_amnt_sites(SITELIST *s_list) {
+    assert(s_list != NULL);
+
+    return s_list->amnt_sites;
+}

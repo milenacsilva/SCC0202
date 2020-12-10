@@ -24,7 +24,7 @@ TEST_CASE =
 
 
 clean: $(MAIN)
-$(MAIN): main.o utils.o site.o avl.o mini_google_bot.o
+$(MAIN): main.o utils.o parser.o site.o list.o avl.o mini_google_bot.o
 
 run:
 	./$(MAIN)
