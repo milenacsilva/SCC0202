@@ -152,7 +152,7 @@ Site site_init(string *values, int amnt_values) {
 
 /* Deletes a `Site` instance given its address. */
 void site_delete(Site *site) {
-    assert(*site != NULL);
+    if (*site == NULL) return;
 
     free((*site)->name);
     (*site)->name = NULL;

@@ -9,7 +9,7 @@
 #include "mini_google_bot.h"
 
 int main() {
-    MINI_GOOGLE_BOT *bot = mini_google_bot_init();
+    MiniGoogleBot *bot = mini_google_bot_init();
     mini_google_bot_start(bot);
     mini_google_bot_run(bot);
     mini_google_bot_stop(bot);

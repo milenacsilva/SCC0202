@@ -10,6 +10,9 @@
 #define TRUE 1
 #define FALSE 0
 
+#define FOUND 1
+#define NOT_FOUND -1
+
 #define bool int
 #define string char*
 

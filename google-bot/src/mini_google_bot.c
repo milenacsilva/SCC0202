@@ -23,9 +23,7 @@ static void remove_site(Avl avl, int key);
 static void insert_keyword(Avl avl, int key);
 static void update_relevancy(Avl avl, int key);
 
-/* 
-    Insert all sites upon reading a csv file.
-*/
+/* Insert all sites upon reading a csv file. */
 static bool insert_sites_from_csv_file(Avl avl, string filename) {
     FILE *f_in = open_file(filename, "r");
     int amnt_values;
@@ -53,21 +51,16 @@ static bool insert_sites_from_csv_file(Avl avl, string filename) {
     return SUCCESS;
 }
 
-/*
-    Inserts a new site manually, by readig from stdin 
-*/
+/* Inserts a new site manually, by reading from stdin */
 static void insert_sites_from_stdin(Avl avl) {
     string values[MAX_AMNT_VALUES] = {0};
     
     printf("Chave: ");
     values[KEY] = readline(stdin);
-    
     printf("Nome: ");
     values[NAME] = readline(stdin);
-    
     printf("Relevância (1-1000): ");
     values[RELEVANCY] = readline(stdin);
-    
     printf("Link: ");
     values[LINK] = readline(stdin);
     
@@ -75,11 +68,9 @@ static void insert_sites_from_stdin(Avl avl) {
     while (TRUE) {
         printf("Quantidade de palavras-chave: ");
         amnt_keywords = readnum(stdin);
-        
         if (amnt_keywords <= MAX_KEYWORDS) break;
         printf("Valor inválido! Digite um número de 1 a 10\n/");
     }
- 
     for (int i = 0; i < amnt_keywords; ++i) {
         values[KEYWORDS + i] = readline(stdin);
     }
@@ -99,18 +90,14 @@ static void insert_sites_from_stdin(Avl avl) {
     }
 }
 
-/*
-    Removes an instance of a site
-*/
+/* Removes an instance of a site. */
 static void remove_site(Avl avl, int key) {
     if (avl_delete_site(avl, key) == SUCCESS) printf("Site removido com sucesso\n");
     else printf("Erro ao remover site: site não encontrado\n");
     
 }
 
-/*
-    Adds an keyword to an existing site in a list
-*/
+/* Adds an keyword to an existing site in a list. */
 static void insert_keyword(Avl avl, int key) {
     printf("Qual palavra chave gostaria de adicionar?");
     string keyword = readline(stdin);
@@ -123,9 +110,7 @@ static void insert_keyword(Avl avl, int key) {
     free(keyword);
 }
 
-/* 
-    Updates the relevancy of an existing site in a list
-*/
+/* Updates the relevancy of an existing site in a list. */
 static void update_relevancy(Avl avl, int key) {
     printf("Qual é a nova relevância? ");
     int relevancy = readnum(stdin);
@@ -136,38 +121,38 @@ static void update_relevancy(Avl avl, int key) {
     
 }
 
+/* Seachers for sites containing a keyword. */
 static void search_for_keyword(Avl avl) {
     printf("Qual palavra chave deseja buscar? ");
     string keyword = readline(stdin);
 
-    SITELIST *matches = avl_search_keyword(avl, keyword);
+    List matches = avl_search_keyword(avl, keyword);
 
    
     printf("Os sites relativos a sua busca são\n");
-    sitelist_print(matches, 5);
+    list_print(matches, 0);
 
     free(keyword);
-    sitelist_delete(&matches);
+    list_delete(&matches);
 }
 
+/* Gets a list of site suggestions based on a keword. */
 static void get_site_sugestion(Avl avl) {
     printf("Qual é a palvra chave para efetuar a sugestão de sites? ");
     string keyword = readline(stdin);
 
-    SITELIST *suggestions = get_suggestions(avl, keyword, 5);
-    sitelist_print(suggestions, 5);
+    List suggestions = get_suggestions(avl, keyword, 5);
+    list_print(suggestions, 5);
 
 
-    sitelist_delete(&suggestions);
+    list_delete(&suggestions);
     free(keyword);
 }
 
 
-/* 
-    Initialize an google bot instance
-*/
-MINI_GOOGLE_BOT *mini_google_bot_init(void) {
-    MINI_GOOGLE_BOT *bot = malloc(sizeof(MINI_GOOGLE_BOT));
+/* Initialize an google bot instance. */
+MiniGoogleBot *mini_google_bot_init(void) {
+    MiniGoogleBot *bot = malloc(sizeof(MiniGoogleBot));
 
     if (bot == NULL) {
         return NULL;
@@ -178,10 +163,8 @@ MINI_GOOGLE_BOT *mini_google_bot_init(void) {
     return bot;
 }
 
-/* 
-    Starts the google bot by reading from a csv file.
-*/
-bool mini_google_bot_start(MINI_GOOGLE_BOT *bot) {
+/* Starts the google bot by reading from a csv file. */
+bool mini_google_bot_start(MiniGoogleBot *bot) {
     if (bot == NULL) {
         printf("Erro ao incializar google bot: objeto vazio\n");
         return ERROR;
@@ -201,10 +184,8 @@ bool mini_google_bot_start(MINI_GOOGLE_BOT *bot) {
     return SUCCESS;
 }
 
-/* 
-    Runs the google bot.
-*/
-bool mini_google_bot_run(MINI_GOOGLE_BOT *bot) {
+/* Runs the google bot. */
+bool mini_google_bot_run(MiniGoogleBot *bot) {
     while (TRUE) { 
         printf("\nO que você deseja fazer? (Digite o número equivalente ao comando)\n");
         printf("0 - Inserir site manualmente\n");
@@ -262,10 +243,8 @@ bool mini_google_bot_run(MINI_GOOGLE_BOT *bot) {
     }
 }
 
-/*
-    Stops the mini google bot
-*/
-void mini_google_bot_stop(MINI_GOOGLE_BOT *bot) {
+/* Stops the mini google bot. */
+void mini_google_bot_stop(MiniGoogleBot *bot) {
     printf("+-------------------------------------------------+\n");
     printf("|            FINALIZANDO GOOGLE BOT...            |\n");
     printf("+-------------------------------------------------+\n");
@@ -285,10 +264,8 @@ void mini_google_bot_stop(MINI_GOOGLE_BOT *bot) {
     free(user_choice);
 }
 
-/*
-    Function that deletes an bot instance
-*/
-void mini_google_bot_delete(MINI_GOOGLE_BOT **bot) {
+/* Function that deletes an bot instance. */
+void mini_google_bot_delete(MiniGoogleBot **bot) {
     if (*bot == NULL) {
         return;
     }

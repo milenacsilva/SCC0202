@@ -11,10 +11,6 @@
 #define MAX_LINK_LEN 100
 #define MAX_AMNT_VALUES 14
 
-/* `site_search()` returns */
-#define FOUND 1
-#define NOT_FOUND 0
-
 #include "utils.h"
 
 typedef enum { // Values indexes

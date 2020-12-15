@@ -7,12 +7,14 @@
 
 typedef struct avl  *Avl;
 
+/* Traversal printing orders */
 typedef enum {
     PREORDER,
     INORDER,
     POSTORDER
 } PRINTING_ORDER;
 
+/* Formating types for outfile */
 typedef enum {
     CSV,
     TERMINAL
@@ -64,16 +66,13 @@ Site avl_get_site(Avl avl, int key);
 
 /*
     Searchs for an `keyword` in a tree and 
-    returns a array of `Site` containing 
-    it.
+    returns a array of `Site` containing it.
 */
-SITELIST* avl_search_keyword(Avl avl, string keyword);
+List avl_search_keyword(Avl avl, string keyword);
 
-/*
-    Searchs for an `keyword` in a tree and 
-    returns a array of `Site` containing 
-    it.
+/* 
+    Get a suggestion of `Site`s based on a keyword`.
 */
-SITELIST* get_suggestions(Avl avl, string keyword, int max_amnt_suggestions);
+List get_suggestions(Avl avl, string keyword, int max_amnt_suggestions);
 
 #endif

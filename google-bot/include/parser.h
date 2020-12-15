@@ -1,5 +1,5 @@
-#ifndef CVS_PARSER_H
-#define CSV_PARSER_H
+#ifndef _PARSER_H
+#define _PARSER_H
 
 #include "utils.h"
 #include <regex.h>

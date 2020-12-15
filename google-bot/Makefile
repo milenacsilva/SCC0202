@@ -20,11 +20,8 @@ DBFLAGS = --leak-check=full --show-leak-kinds=all\
 		  --track-origins=yes --verbose 
 TEST_CASE = 
 
-
-
-
 clean: $(MAIN)
-$(MAIN): main.o utils.o parser.o site.o list.o avl.o mini_google_bot.o
+$(MAIN): main.o utils.o parser.o site.o trie.o list.o avl.o mini_google_bot.o
 
 run:
 	./$(MAIN)
