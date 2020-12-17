@@ -270,24 +270,25 @@ static void _rebalance_tree(Node *root) {
 static bool _delete_node(Node *root, int key) {
     if (*root == NULL) return ERROR;
     
-    if (site_get_key((*root)->site) > key)  _delete_node(&(*root)->left, key);
-    else if (site_get_key((*root)->site) < key) _delete_node(&(*root)->right, key);
-    else {
+    bool return_flag = SUCCESS;
+    if (site_get_key((*root)->site) > key) {
+        return_flag = _delete_node(&(*root)->left, key);
+    } else if (site_get_key((*root)->site) < key) {
+        return_flag = _delete_node(&(*root)->right, key);
+    } else {
         Node successor;
         if ((*root)->left == NULL) {
             successor = (*root)->right;
-            
             free(*root);
             *root = successor;    
-            return SUCCESS;
+            return return_flag;
         }
         
         if ((*root)->right == NULL) {
             successor = (*root)->left;
-    
             free(*root);
             *root = successor;
-            return SUCCESS;
+            return return_flag;
         }
 
         successor = _get_max_value((*root)->left);
@@ -297,10 +298,12 @@ static bool _delete_node(Node *root, int key) {
         site_delete(&tmp);
     }
 
-    if (*root == NULL) return SUCCESS;
+    if (*root == NULL){
+        return return_flag;
+    }
 
     _rebalance_tree(root);
-    return SUCCESS;
+    return return_flag;
 }
 
 /* Gets a `List` of `Site`s containing a `keyword` from an `Avl`. */ 
