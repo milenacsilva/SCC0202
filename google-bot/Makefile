@@ -7,7 +7,7 @@ MAIN = main
 OUTPUT_OPTION = -o $@
 
 INCLUDES = -I ./include 
-CFLAGS = -std=c99 -O1
+CFLAGS = -std=c99 -O1 -g
 COMPILE.c = $(CC) $(DDEBUG) $(CFLAGS) $(INCLUDES) $(CPPFLAGS) $(TARGET_ARCH) -c 
 
 LDLIBS =

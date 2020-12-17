@@ -267,14 +267,14 @@ static void _rebalance_tree(Node *root) {
 }
 
 /* Searchs and deletes a `Node` given its `key` */
-static bool _delete_node(Node *root, int key) {
+static bool _delete_max_value(Node *root, int key) {
     if (*root == NULL) return ERROR;
     
     bool return_flag = SUCCESS;
     if (site_get_key((*root)->site) > key) {
-        return_flag = _delete_node(&(*root)->left, key);
+        return_flag = _delete_max_value(&(*root)->left, key);
     } else if (site_get_key((*root)->site) < key) {
-        return_flag = _delete_node(&(*root)->right, key);
+        return_flag = _delete_max_value(&(*root)->right, key);
     } else {
         Node successor;
         if ((*root)->left == NULL) {
@@ -291,10 +291,59 @@ static bool _delete_node(Node *root, int key) {
             return return_flag;
         }
 
+    }
+
+    if (*root == NULL){
+        return return_flag;
+    }
+
+    _rebalance_tree(root);
+    return return_flag;
+}
+
+
+/* Searchs and deletes a `Node` given its `key` */
+static bool _delete_node(Node *root, int key) {
+    if (*root == NULL) return ERROR;
+    
+    printf("a chav eeh %d\n", key);
+    bool return_flag = SUCCESS;
+    if (site_get_key((*root)->site) > key) {
+        return_flag = _delete_node(&(*root)->left, key);
+    } else if (site_get_key((*root)->site) < key) {
+        return_flag = _delete_node(&(*root)->right, key);
+    } else {
+        Node successor;
+        if ((*root)->left == NULL) {
+            if((*root)->right == NULL) {
+                Site tmp = (*root)->site;
+                site_print(tmp, stdout);
+                free(*root);
+                *root = NULL;
+                site_delete(&tmp);
+                return return_flag;
+            }
+            successor = (*root)->right;
+            site_delete(&(*root)->site);
+            (*root)->site = NULL;
+            free(*root);
+            *root = successor;    
+            return return_flag;
+        }
+        
+        if ((*root)->right == NULL) {
+            successor = (*root)->left;
+            site_delete(&(*root)->site);
+            (*root)->site = NULL;
+            free(*root);
+            *root = successor;
+            return return_flag;
+        }
+
         successor = _get_max_value((*root)->left);
         Site tmp = (*root)->site;
         (*root)->site = successor->site;        
-        _delete_node(&(*root)->left, site_get_key(successor->site));
+        _delete_max_value(&(*root)->left, site_get_key(successor->site));
         site_delete(&tmp);
     }
 
