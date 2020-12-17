@@ -46,11 +46,11 @@ O que você deseja fazer? (Digite o número equivalente ao comando)
 ## Estruturas Utilizadas
 
 ### Estrutura principal (AVL)
-* Visão Geral:
+#### Visão Geral:
 
 Para a estrutura principal, foi utilizado uma árvore `Avl` (estrutura dinâmica) ordenada pela chave dos sites. Isso porquê, tratando-se de uma árvore de busca balanceada, ela mantêm o custo das operações tendendo a `O(log n)` mesmo no seu pior caso.
 
-* Implementação:
+#### Implementação:
 
 ```cpp
 typedef struct node *Node;
@@ -68,21 +68,21 @@ struct avl {
 
 ```
 
-* Como funciona:
+#### Como funciona:
 
 O balanceamento de uma `Avl` é feito de modo que a altura cada uma de suas sub-árvores podem diferir em no máximo 1 unidade, nós dando assim uma árvore de altura constante igual à `O(log n)`. Para garantir isso, a cada inserção ou remoção a altura, e por consequência, o fator de balanceamento (altura do nó esquerdo - altura do nó direito) deve ser atualizada a partir do nó inserido até a raiz da árvore. Na inserção basta encontrar apenas o primeiro nó desregulado e aplicar o operação de rotação necessária. Na remoção essa verificação deverá prosseguir até a raiz, podendo ser necessáio mais de uma rotação.
 
-* Complexidade:
+#### Complexidade:
 
 Sua complexidade de espaço é `O(n)` e todas as operações bases tem complexidade de tempo `O(log n)`. 
 
 
 ### Estrutura de retorno p/ busca de palavra chave e sugestão de sites (LISTA ENCADEADA)
-* Visão Geral:
+#### Visão Geral:
 
 Para o retorno dessas funções, foi se utilizado uma `Lista Encadeada Simples` com inserção ordenada (a utilização de uma avl não seria possível pois diferentes sites podem ter a mesma relevância). Além disso, como as únicas operações que temos que fazer nessa estrutura é inserir, printar os sites e deletar a instância criada, um encadeamento simples foi o suficiente. Por fim, considerando que não sabemos o total de sites a serem adicionados, foi preferida uma alocaçâo dinâmica. 
 
-* Implementação:
+#### Implementação:
 
 ```cpp
 typedef struct node *Node;
@@ -98,20 +98,20 @@ struct list {
 };
 ```
 
-* Como funciona:
+#### Como funciona:
 
 A inserção de sites foi feita de acordo com a ordem decrescente de relevância, sendo que sites com chaves iguais não podem se fazer presentes na lista. Para facilitar o código posteriormente, foi utilizado também um ponteiro `Node cur` que inicia no mesmo nó correspondente à `head` da lista e que, com ajuda da função `list_go_to_next_node()`, anda pela lista até chegar no seu fim.
 
-* Complexidade:
+#### Complexidade:
 
 Sua complexidade de espaço e complexidade de tempo da impressão, inserção ordenada e de `delete()` são todas `O(n)`.
 
 ### Estrutura auxiliar para a sugestão de sites (TRIE)
-* Visão Geral:
+#### Visão Geral:
 
 Para auxiliar a sugestão de sites, utilizamos uma `Trie` ou ainda `Árvore de prefixos`. O motivo de utilização dessa estrutura foi que, mesmo utilizando bastante memória, todas as operações tem uma complexidade de tempo `O(m)` onde `m` é o tamanho da palavra chave (que, segundo as especificações da primeira parte do projeto é no máximo 50).
 
-* Implementação:
+#### Implementação:
 ```cpp
 typedef struct node *Node;
 struct node {
@@ -124,22 +124,22 @@ struct trie {
 };
 ```
 
-* Como funciona:
+#### Como funciona:
 ![Exemplo](https://www.ime.usp.br/~pf/estruturas-de-dados/aulas/figuressw/Chapter5/TrieAnatomy.png)
 
 Como podemos ver na ilustração acima disponiblizada pelo [Ime](https://www.ime.usp.br), cada nível da árvore que se desce corresponde a avançar uma letra na palavra-chave. Desse modo, quando chegamos no nó com `ìs_leaf` igual a `true`, temos a palavra-chave completa.
 
-* Complexidade:
+#### Complexidade:
 
 Sua inserção e busca possuem uma complexidade de tempo `O(m)` onde `m` é o tamanho da palavra-chave em questão, enquanto sua complexidade de espaço e de `delete()` são `O(n*m)`.
 ## Novas funções
 
 ### Buscar palavra chave
-* Visão Geral:
+#### Visão Geral:
 
 Para buscar os sites contendo uma palavra-chave, rodamos por toda a `Avl` (`O(n)`) e a cada site contendo a palavra, inserimos ele na lista ordenado por sua relevância. Assim, no pior caso temos uma complexidade de tempo de `O(n²)`.
 
-* Implementação:
+#### Implementação:
 
 ```cpp
 /* Gets a `List` of `Site`s containing a `keyword` from an `Avl`. */ 
