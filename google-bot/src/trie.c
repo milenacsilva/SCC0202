@@ -40,7 +40,7 @@ static Node _search(Node root, string word, int i) {
     if (root == NULL || (i == strlen(word) && !root->is_leaf)) return NULL; // If hasn't found the searched word
     if (i == strlen(word)) return root; // If has found
 
-    assert(isalpha(word[i])); // In case there is an non-alphabetic char  
+    if (!isalnum(word[i])) return NULL;
 
     int char_index = get_char_index(word[i]);
     return _search(root->children[char_index], word, i + 1);

@@ -44,7 +44,6 @@ static Node _get_max_value(Node root);
 static void _rebalance_tree(Node *root);
 static bool _delete_node(Node *root, int key);
 static void _get_sites_with_keyword_in_avl(Node root, List s_list, string keyword);
-static void _get_keyword_suggestions(Avl avl, List suggestions, string base_keyword);
 
 
 /* Frees and nullifies a `Node` instance, but will only delete the `Site` instance in it if specified. */
@@ -316,40 +315,7 @@ static void _get_sites_with_keyword_in_avl(Node root, List s_list, string keywor
     _get_sites_with_keyword_in_avl(root->left, s_list, keyword);
     _get_sites_with_keyword_in_avl(root->right, s_list, keyword);
 } 
-
-/* Get a suggestion of `Site`s based on a `keyword`. */
-static void _get_keyword_suggestions(Avl avl, List suggestions, string base_keyword) {
-    List matches_with_base_keyword = avl_search_keyword(avl, base_keyword);
-
-    Trie searched_keywords = trie_init(); 
-    trie_insert_word(searched_keywords, base_keyword);
-
-    Site cur_site;
-    while ((cur_site = list_get_cur_site(matches_with_base_keyword)) != NULL) {
-        list_insert_site(suggestions, cur_site);
-       
-        int amnt_keywords = site_get_amnt_keywords(cur_site);
-        string *keywords = site_get_keywords(cur_site);
-
-        for (int j = 0; j < amnt_keywords; ++j) {
-            if (trie_search_word(searched_keywords, keywords[j]) == FOUND) continue;
-
-            List new_suggestions = avl_search_keyword(avl, keywords[j]);
-            Site cur_suggestion;
-            while ((cur_suggestion = list_get_cur_site(new_suggestions)) != NULL) {
-                list_insert_site(suggestions, cur_suggestion);
-                list_go_to_next_site(new_suggestions);
-            }
-            list_delete(&new_suggestions);
-            trie_insert_word(searched_keywords, keywords[j]);
-        }
-        list_go_to_next_site(matches_with_base_keyword);
-    }
-
-    trie_delete(&searched_keywords);
-    list_delete(&matches_with_base_keyword);
-}
-
+/* Gets a `Trie` instance of all keywords from the sites with `base_keyword`. */
 static Trie _get_suggested_keywords(Avl avl,  string base_keyword) {
     List matches_with_base_keyword = avl_search_keyword(avl, base_keyword); // n^2
 
@@ -358,45 +324,44 @@ static Trie _get_suggested_keywords(Avl avl,  string base_keyword) {
 
     Site cur_site;
     while ((cur_site = list_get_cur_site(matches_with_base_keyword)) != NULL) {       // n 
+        
         int amnt_keywords = site_get_amnt_keywords(cur_site);
         string *keywords = site_get_keywords(cur_site);   
-        for (int j = 0; j < amnt_keywords; ++j) { // 10
+        for (int j = 0; j < amnt_keywords; ++j) {
             trie_insert_word(suggested_keywords, keywords[j]);
         }
+        list_go_to_next_site(matches_with_base_keyword);
     }
 
     list_delete(&matches_with_base_keyword);
     return suggested_keywords;
 }
 
-
+/* Gets a list of `suggested_sites` that contain any word in the `suggested_keywords`. */
 static void _search_suggestions_in_avl(Node root, Trie suggested_keywords, List suggested_sites) {
     if (root == NULL) return;
 
     int amnt_keywords = site_get_amnt_keywords(root->site);
-    string keywords = site_get_keywords(root->site);
+    string *keywords = site_get_keywords(root->site);
     for (int i = 0; i < amnt_keywords; ++i) { 
         if (trie_search_word(suggested_keywords, keywords[i]) == FOUND) {
-            list_insert_site(suggested_sites, root->site); // n
+            list_insert_site(suggested_sites, root->site); 
             break;
         }
     }
-
-    _get_sites_with_keyword_in_avl(root->left, suggested_keywords, suggested_sites);
-    _get_sites_with_keyword_in_avl(root->right, suggested_keywords, suggested_sites);
+    _search_suggestions_in_avl(root->left, suggested_keywords, suggested_sites);
+    _search_suggestions_in_avl(root->right, suggested_keywords, suggested_sites);
 }
-
 
 /* Get a suggestion of `Site`s based on a `keyword`. */
 static List _get_suggestions(Avl avl, string base_keyword) {
     Trie suggested_keywords = _get_suggested_keywords(avl, base_keyword);
     List suggested_sites = list_init();
-
     _search_suggestions_in_avl(avl->root, suggested_keywords, suggested_sites);
+    trie_delete(&suggested_keywords);
 
     return suggested_sites;
 }
-
 
 /* Initializes an `Avl` instance. */
 Avl avl_init() {
@@ -499,7 +464,6 @@ List avl_search_keyword(Avl avl, string keyword) {
 /* Get a suggestion of `Site`s based on a `keyword`. */
 List get_suggestions(Avl avl, string keyword, int max_amnt_suggestions) {
     assert(avl != NULL && keyword != NULL);
-    List suggestions = list_init();
-    _get_keyword_suggestions(avl, suggestions, keyword);
-    return suggestions;
+    
+    return _get_suggestions(avl, keyword);
 }
