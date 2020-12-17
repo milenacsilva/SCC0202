@@ -44,14 +44,10 @@ static bool insert_node(List s_list, Site site) {
 List list_init() {
     List s_list = malloc(sizeof(*s_list));
 
-    if (s_list ==  NULL) {
-        return NULL;
-    }
-
+    assert(s_list != NULL);
     s_list->amnt_sites = 0;
     s_list->head = NULL;
     s_list->cur = NULL;
-
     return s_list;
 }
 
@@ -92,10 +88,11 @@ void list_print(List s_list, int amnt_sites_to_print) {
     assert(s_list != NULL);
 
     if (s_list->amnt_sites == 0) {
-        printf("Lista de sites vazia\n");
+        printf("Nada foi encontrado :(\n");
         return;
     }
 
+    printf("\nOs sites relativos a sua busca são\n");
     if (amnt_sites_to_print == 0)  {
         amnt_sites_to_print = s_list->amnt_sites;
     }

@@ -28,23 +28,25 @@ struct avl {
 };
 
 
-static void _nullify_node(Node *node, bool delete_site);
-static Node _init_node(Site site);
+static void _nullify_node(Node*, bool delete_site);
+static Node _init_node(Site);
 static Node _search_node(Node root, int key);
 static void _rotate_left(Node *root);
 static void _rotate_right(Node *root);
-static int _get_balance_factor(Node node);
+static int _get_balance_factor(Node);
 static void _balance_tree(Node *root, int key);
-static bool _insert_node(Node *root, Site site);
-static void _print_inorder(Node root, PRINTING_FORMAT format, FILE *outfile);
-static void _print_preorder(Node root, PRINTING_FORMAT format, FILE *outfile);
-static void _print_postorder(Node root, PRINTING_FORMAT format, FILE *outfile);
+static bool _insert_node(Node *root, Site);
+static void _print_inorder(Node root, PRINTING_FORMAT, FILE *outfile);
+static void _print_preorder(Node root, PRINTING_FORMAT, FILE *outfile);
+static void _print_postorder(Node root, PRINTING_FORMAT, FILE *outfile);
 static void _delete_all_nodes(Node *root, bool delete_site);
 static Node _get_max_value(Node root);
 static void _rebalance_tree(Node *root);
 static bool _delete_node(Node *root, int key);
-static void _get_sites_with_keyword_in_avl(Node root, List s_list, string keyword);
-
+static void _get_sites_with_keyword_in_avl(Node root, List, string keyword);
+static Trie _get_suggested_keywords(Avl,  string base_keyword);
+static void _search_suggestions_in_avl(Node root, Trie suggested_keywords, List suggested_sites);
+static List _get_suggestions(Avl, string base_keyword);
 
 /* Frees and nullifies a `Node` instance, but will only delete the `Site` instance in it if specified. */
 static void _nullify_node(Node *node, bool delete_site) {
@@ -462,6 +464,5 @@ List avl_search_keyword(Avl avl, string keyword) {
 /* Get a suggestion of `Site`s based on a `keyword`. */
 List get_suggestions(Avl avl, string keyword, int max_amnt_suggestions) {
     assert(avl != NULL && keyword != NULL);
-    
     return _get_suggestions(avl, keyword);
 }

@@ -23,8 +23,6 @@ struct terminators {
 
 /* 
     Reads an numeric line from a file 
-
-    @param stream input file pointer 
 */
 #define readnum(file, ...) \
     _readnum(file, (struct terminators) { \
@@ -36,18 +34,13 @@ int _readnum(FILE *stream, const struct terminators);
 /* 
     Reads a string from a input file. 
     Stops reading when fgetc(stream) finds a '\\n' character or EOF is reached.
-    
-    @param stream input file pointer
 */
 string readline(FILE *stream);
 
 /* 
     Opens an file and deals with any error generated
-
-    @param file_path path to the file
-    @param flag opening flag 
 */
-FILE* open_file(char *file_path, char *flag);
+FILE *open_file(const string file_path, const string flag);
 
 #define read_input_stream(file, ...) \
     _read_input_stream(file, (struct terminators) { \
@@ -62,10 +55,8 @@ string _read_input_stream(FILE *stream, const struct terminators);
 	so a local implementation is necessary
 
 	Takes a string and returns a copy of it allocated with malloc
-
-	@param string pointer to the memory being copied
 */
-char* my_strdup(const char* str);
+string my_strdup(const string str);
 
 /*
 	Implementation of strndup(3).
@@ -74,10 +65,8 @@ char* my_strdup(const char* str);
 
 	Takes a string and returns a copy of it allocated with malloc with at most n+1 bytes
 
-	@param string pointer to the memory being copied
-	@param n maximum amount of bytes to be copied
 */
-char* my_strndup(const char* str, int n);
+string my_strndup(const string str, int n);
 
 
 #endif

@@ -22,10 +22,6 @@ struct site {
 static int _verify_values(string *values, int amnt_keywords);
 static bool _keywords_binary_search(string *keywords,string key, int min, int max);
 static int _verify_values(string *values, int amnt_keywords);
-static bool _keywords_binary_search(string *keywords, string key, int min, int max);
-static void _swap(string *a, string *b);
-static void _heap_constructor(string *base_arr, int arr_len, int father_index);
-static void _heapsort_string(string *base_arr, int arr_len);
 
 
 /* Verifies if the `values` are within the `Site` specifications. */
@@ -66,64 +62,6 @@ static int _verify_values(string *values, int amnt_keywords) {
     return flag;
 }
 
-/* Binary searches for a `key` in a `keywords` array. */
-static bool _keywords_binary_search(string *keywords, string key, int min, int max) {
-    if (min > max) {
-        return NOT_FOUND;
-    }
-
-    int mid = min + (max - min)/2;
-
-    if (strcmp(keywords[mid], key) == 0) {
-        return mid;
-    }
-    if (strcmp(keywords[mid], key) < 0) {
-        return _keywords_binary_search(keywords, key, mid + 1, max);
-    }
-    return _keywords_binary_search(keywords, key, min, mid - 1);
-}
-
-/* Swaps two `string`s. */
-static void _swap(string *a, string *b) {
-    string tmp = *a;
-    *a = *b;
-    *b = tmp; 
-}
-  
-/* ucts a heap tree for `_heapsort_string`. */ 
-static void _heap_constructor(string *base_arr, int arr_len, int father_index) {
-    int largest_index = father_index;
-    int left_child_index = 2*father_index + 1;
-    int right_child_index = left_child_index + 1;
-
-    if (left_child_index < arr_len && strcmp(base_arr[left_child_index], base_arr[largest_index]) > 0) {
-        largest_index = left_child_index;
-    }
-    if (right_child_index < arr_len  && strcmp(base_arr[right_child_index], base_arr[largest_index]) > 0) {
-        largest_index = right_child_index;
-    }
-
-    if (largest_index == father_index) {
-        return;
-    }
-
-    _swap(&base_arr[largest_index], &base_arr[father_index]);
-    _heap_constructor(base_arr, arr_len, largest_index);
-}
-
-/* Sorts an array of `string`s using heapsort algorithm. */
-static void _heapsort_string(string *base_arr, int arr_len) {
-    int mid = arr_len/2;
-    
-    for (int i = mid - 1 ; i >= 0; --i) {
-        _heap_constructor(base_arr, arr_len, i);
-    }
-
-    for (int i = arr_len - 1; i > 0; --i) {
-        _swap(&base_arr[0], &base_arr[i]);
-        _heap_constructor(base_arr, i, 0);
-    }     
-}
 
 /* Initializes a `Site` instance from a `values` arr. */
 Site site_init(string *values, int amnt_values) {
@@ -145,7 +83,6 @@ Site site_init(string *values, int amnt_values) {
     for (int i = 0; i < amnt_keywords; ++i) {
         site->keywords[i] = my_strdup(values[KEYWORDS + i]);
     }
-    _heapsort_string(site->keywords, site->amnt_keywords);
 
     return site;
 }
@@ -185,14 +122,12 @@ bool site_insert_keyword(Site site, string keyword) {
     if (site->amnt_keywords == MAX_KEYWORDS) {
         return ERROR;
     }
-
     if (_keywords_binary_search(site->keywords, keyword, 0, site->amnt_keywords - 1) == NOT_FOUND) { // If keyword already exists
         return ERROR;
     }
 
     site->keywords[site->amnt_keywords] = my_strdup(keyword);
     ++site->amnt_keywords;
-
     _heapsort_string(site->keywords, site->amnt_keywords); // Sorts the keyword after each insertion
 
     return SUCCESS;
@@ -227,7 +162,6 @@ bool site_update_relevancy(Site site, int relevancy) {
     if (relevancy > MAX_RELEVANCY || relevancy < MIN_RELEVANCY) { 
         return ERROR;
     }
-
     site->relevancy = relevancy;
     return SUCCESS;
 }
@@ -240,11 +174,9 @@ void site_print_in_csv_format(Site site, FILE *outfile) {
     fprintf(outfile, ",%s", site->name);
     fprintf(outfile, ",%d", site->relevancy);
     fprintf(outfile, ",%s", site->link);
-
     for (int i = 0; i < site->amnt_keywords; ++i) {
         fprintf(outfile, ",%s", site->keywords[i]);
     }
-
     fprintf(outfile, "\n");
 }
 
@@ -252,40 +184,40 @@ void site_print_in_csv_format(Site site, FILE *outfile) {
 bool site_search_keyword(Site site, string keyword) {
     assert(site != NULL);
     assert(keyword != NULL);
-
-    int index = _keywords_binary_search(site->keywords, keyword, 0, site->amnt_keywords - 1);
-    return index == NOT_FOUND ? NOT_FOUND : FOUND;
+    for (int i = 0; i < site->amnt_keywords; ++i) {
+        if (strcmp(site->keywords[i], keyword) == 0) {
+            return FOUND;
+        }
+    }
+    return NOT_FOUND;
 }
 
 /* Returns the keywords array from a `Site`. */
 string* site_get_keywords(Site site) {
     assert(site != NULL);
-
     return site->keywords;
 }
 
 /* Returns the amount of keywords a a `Site`. */
 int site_get_amnt_keywords(Site site) {
     assert(site != NULL);
-
     return site->amnt_keywords;
 }
 
+/* Returns the `name`of a `Site`. */
 string site_get_name(Site site) {
     assert(site != NULL);
-
     return site->name;
 }
 
+/* Returns the `link`of a `Site`. */
 string site_get_link(Site site) {
     assert(site != NULL);
-
     return site->link;
 }
 
 /* Returns the relevancy of a `Site`. */
 int site_get_relevancy(Site site) {
     assert(site != NULL);
-
     return site->relevancy;
 }

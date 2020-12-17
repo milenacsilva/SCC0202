@@ -137,7 +137,9 @@ Sua inserção e busca possuem uma complexidade de tempo `O(m)` onde `m` é o ta
 ### Buscar palavra chave
 #### Visão Geral:
 
-Para buscar os sites contendo uma palavra-chave, rodamos por toda a `Avl` (`O(n)`) e a cada site contendo a palavra, inserimos ele na lista ordenado por sua relevância. Assim, no pior caso temos uma complexidade de tempo de `O(n²)`.
+Para buscar os sites contendo uma palavra-chave, rodamos por toda a `Avl` (`O(n)`) e a cada site contendo a palavra, inserimos ele na lista ordenado por sua relevância. Assim, no pior caso temos uma complexidade de tempo de `O(n²)`. 
+
+Vale ressaltar que a busca de uma `keyword` no site é feita através de uma `busca linear`, que, devido ao tamanho pequeno e limitado do vetor, podemos considerar como constante na análise assintótica. O motivo de não implementarmos uma busca binária está novamente relacionado a quantidade máxima de palavras-chave: ordenar um array com 10 itens a cada inserção para depois realizar a busca binária é fútil.   
 
 #### Implementação:
 

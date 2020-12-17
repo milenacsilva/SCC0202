@@ -63,7 +63,7 @@ void site_print_in_csv_format(Site site, FILE *f_out);
 /*
     Searches for a `keyword` in a `Site`'s keywords.
 */
-string* site_get_keywords(Site site);
+string *site_get_keywords(Site site);
 
 /*
     Returns the keywords array from a `Site`.
@@ -80,9 +80,14 @@ int site_get_amnt_keywords(Site site);
 */
 int site_get_relevancy(Site site);
 
-
+/*
+    Returns the `name`of a `Site`.
+*/
 string site_get_name(Site site);
 
+/*
+    Returns the `link`of a `Site`.
+*/
 string site_get_link(Site site);
 
 #endif

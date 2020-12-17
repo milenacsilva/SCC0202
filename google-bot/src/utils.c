@@ -15,11 +15,11 @@ string _read_input_stream(FILE *stream, const struct terminators t);
 /* 
     Opens an file and deals with any errors generated
 */
-FILE* open_file(char *file_path, char *flag) {
+FILE* open_file(const char *file_path, const char *flag) {
     FILE *fp = fopen(file_path, flag);
 
     if (fp == NULL) { 
-        perror("Error: ");
+        perror("Error");
         exit(EXIT_FAILURE);
     }
 

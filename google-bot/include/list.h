@@ -30,9 +30,6 @@ void list_print(List s_list, int amnt_sites_to_print);
 /* 
     Go to the next `Site` in the list starting at he `head`. Walks with the `cur` pointer.
 */
-int sitelis_get_amnt_sites(List s_list);
-
-
 void list_go_to_next_site(List s_list);
 
 /* 
