@@ -67,7 +67,8 @@ static void insert_sites_from_stdin(Avl avl) {
     int amnt_keywords;
     while (TRUE) {
         printf("Quantidade de palavras-chave: ");
-        amnt_keywords = readnum(stdin);
+        amnt_keywords = readnum(stdin, .amnt_terminators=2,
+                                    .terminators=(int[]){'\n', EOF});
         if (amnt_keywords <= MAX_KEYWORDS) break;
         printf("Valor inválido! Digite um número de 1 a 10\n/");
     }
@@ -113,7 +114,8 @@ static void insert_keyword(Avl avl, int key) {
 /* Updates the relevancy of an existing site in a list. */
 static void update_relevancy(Avl avl, int key) {
     printf("Qual é a nova relevância? ");
-    int relevancy = readnum(stdin);
+    int relevancy = readnum(stdin, .amnt_terminators=2,
+                                    .terminators=(int[]){'\n', EOF});
     
     Site site = avl_get_site(avl, key);
     if (site !=  NULL && site_update_relevancy(site, relevancy) == SUCCESS) printf("Relevância atualizada com sucesso\n");
@@ -208,17 +210,20 @@ bool mini_google_bot_run(MiniGoogleBot *bot) {
         } 
         else if (option == 2) {
             printf("Chave do site: ");
-            int key = readnum(stdin);
+            int key = readnum(stdin, .amnt_terminators=2,
+                                    .terminators=(int[]){'\n', EOF});
             remove_site(bot->avl, key);
         }
         else if (option == 3) {
             printf("Chave do site: ");
-            int key = readnum(stdin);
+            int key = readnum(stdin, .amnt_terminators=2,
+                                    .terminators=(int[]){'\n', EOF});
             update_relevancy(bot->avl, key);
         }
         else if (option == 4) {
             printf("Chave do site: ");
-            int key = readnum(stdin);
+            int key = readnum(stdin, .amnt_terminators=2,
+                                    .terminators=(int[]){'\n', EOF});
             insert_keyword(bot->avl, key);
         }
         else if (option == 5) {

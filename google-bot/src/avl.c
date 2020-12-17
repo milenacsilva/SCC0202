@@ -277,7 +277,6 @@ static bool _delete_node(Node *root, int key) {
         if ((*root)->left == NULL) {
             successor = (*root)->right;
             
-            site_delete(&(*root)->site);
             free(*root);
             *root = successor;    
             return SUCCESS;
@@ -285,8 +284,7 @@ static bool _delete_node(Node *root, int key) {
         
         if ((*root)->right == NULL) {
             successor = (*root)->left;
-
-            site_delete(&(*root)->site);
+    
             free(*root);
             *root = successor;
             return SUCCESS;
@@ -294,11 +292,9 @@ static bool _delete_node(Node *root, int key) {
 
         successor = _get_max_value((*root)->left);
         Site tmp = (*root)->site;
-        (*root)->site = successor->site;
-        (*root)->left = successor->left;
-        
-        successor->site = tmp;
-        _nullify_node(&successor, TRUE);
+        (*root)->site = successor->site;        
+        _delete_node(&(*root)->left, site_get_key(successor->site));
+        site_delete(&tmp);
     }
 
     if (*root == NULL) return SUCCESS;

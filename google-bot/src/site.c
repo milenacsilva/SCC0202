@@ -20,8 +20,6 @@ struct site {
 };
 
 static int _verify_values(string *values, int amnt_keywords);
-static bool _keywords_binary_search(string *keywords,string key, int min, int max);
-static int _verify_values(string *values, int amnt_keywords);
 
 
 /* Verifies if the `values` are within the `Site` specifications. */
@@ -122,13 +120,9 @@ bool site_insert_keyword(Site site, string keyword) {
     if (site->amnt_keywords == MAX_KEYWORDS) {
         return ERROR;
     }
-    if (_keywords_binary_search(site->keywords, keyword, 0, site->amnt_keywords - 1) == NOT_FOUND) { // If keyword already exists
-        return ERROR;
-    }
 
     site->keywords[site->amnt_keywords] = my_strdup(keyword);
     ++site->amnt_keywords;
-    _heapsort_string(site->keywords, site->amnt_keywords); // Sorts the keyword after each insertion
 
     return SUCCESS;
 }
