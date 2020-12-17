@@ -80,4 +80,9 @@ int site_get_amnt_keywords(Site site);
 */
 int site_get_relevancy(Site site);
 
+
+string site_get_name(Site site);
+
+string site_get_link(Site site);
+
 #endif

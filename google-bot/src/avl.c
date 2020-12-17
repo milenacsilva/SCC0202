@@ -315,6 +315,7 @@ static void _get_sites_with_keyword_in_avl(Node root, List s_list, string keywor
     _get_sites_with_keyword_in_avl(root->left, s_list, keyword);
     _get_sites_with_keyword_in_avl(root->right, s_list, keyword);
 } 
+
 /* Gets a `Trie` instance of all keywords from the sites with `base_keyword`. */
 static Trie _get_suggested_keywords(Avl avl,  string base_keyword) {
     List matches_with_base_keyword = avl_search_keyword(avl, base_keyword); // n^2
@@ -402,15 +403,12 @@ void avl_print(Avl avl, PRINTING_ORDER order, PRINTING_FORMAT format, FILE *outf
         printf("Árvore de sites vazia\n");
         return;
     }
-
     if (order == PREORDER) {
         return _print_preorder(avl->root, format, outfile);
     }
-
     if (order == INORDER) {
         return _print_inorder(avl->root, format, outfile);
     }
-
     if (order == POSTORDER) {
         return _print_postorder(avl->root, format, outfile);
     }

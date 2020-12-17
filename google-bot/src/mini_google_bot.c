@@ -129,7 +129,7 @@ static void search_for_keyword(Avl avl) {
     List matches = avl_search_keyword(avl, keyword);
 
    
-    printf("Os sites relativos a sua busca são\n");
+    printf("\nOs sites relativos a sua busca são\n");
     list_print(matches, 0);
 
     free(keyword);
@@ -138,12 +138,13 @@ static void search_for_keyword(Avl avl) {
 
 /* Gets a list of site suggestions based on a keword. */
 static void get_site_sugestion(Avl avl) {
-    printf("Qual é a palvra chave para efetuar a sugestão de sites? ");
+    printf("Qual é a palvara chave para efetuar a sugestão de sites? ");
     string keyword = readline(stdin);
 
     List suggestions = get_suggestions(avl, keyword, 5);
-    list_print(suggestions, 5);
 
+    printf("\nOs sites mais recomendados para você são: \n");
+    list_print(suggestions, 5);
 
     list_delete(&suggestions);
     free(keyword);

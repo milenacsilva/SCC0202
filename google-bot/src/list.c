@@ -102,7 +102,8 @@ void list_print(List s_list, int amnt_sites_to_print) {
 
     int i = 0;
     for (Node curr = s_list->head; curr != NULL && i < amnt_sites_to_print; curr = curr->next, i++) {
-        site_print(curr->site, stdout);
+        printf("%dº - %s\n", i + 1, site_get_name(curr->site));
+        printf("  | %s\n\n", site_get_link(curr->site));
     }
 }
 

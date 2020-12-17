@@ -271,6 +271,18 @@ int site_get_amnt_keywords(Site site) {
     return site->amnt_keywords;
 }
 
+string site_get_name(Site site) {
+    assert(site != NULL);
+
+    return site->name;
+}
+
+string site_get_link(Site site) {
+    assert(site != NULL);
+
+    return site->link;
+}
+
 /* Returns the relevancy of a `Site`. */
 int site_get_relevancy(Site site) {
     assert(site != NULL);

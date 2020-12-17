@@ -11,7 +11,6 @@
 #define get_char_index(cur_char) (tolower(cur_char) - 'a')   
 
 typedef struct node *Node;
-
 struct node {
     bool is_leaf;
     Node *children;
