@@ -3,10 +3,6 @@
 0003,Net,520,https://www.net.com/br/,net,streaming,internet
 0004,Google,400,https://www.google.com/,google,pesquisa,online
 0005,Github,443,https://www.git.com/,github,codigos,gato,social
-0045,Facebook,183,https://www.facebook.com/,facebook,mark,rede,social,amigos,pessoas,videos,cancer
-0293,Samsung,778,https://www.samsung.com/,monitor,computador,celular,galaxy,televisao,escravo
-0663,Motorola,213,https://www.moto.com/,smatphone,celular,hardware,digital
-0070,USP,202,https://www.usp.br/,universidade,livros,caaso,icmc,hp,usp,cancer
 0008,HP,899,https://www.hp.com/,hewlett,packard,mouse,teclado,software,hp
 0555,Microsoft,792,https://www.microsoft.com/,software,windows,sistema,microsoft,icmc
 0800,Altera,552,https://www.altera.com/,icmc,hardware,altera,fpga,laboratorio
@@ -17,12 +13,6 @@
 0009,CocaCola,889,https://www.cocacola.com/,refrigerante,acucar,cancer,gas,liquido,cara,cocacola
 0221,GolfeClass,021,https://www.golfe.com/,roupas,golfe,tecido,oculos,graus
 0880,Positivo,011,https://www.positivo.com/,brasil,mouse,teclado,monitor,computador,usp,laboratorio,positivo,barato
-0222,Riachuelo,455,https://www.riachuelo.com/,roupas,riachuelo,tecido,etiqueta,barato
-0223,Zara,777,https://www.zara.com/,roupas,zara,tecido,preco,etiqueta,cara,moda,escravo,acessorios
-0321,Vivara,995,https://www.vivara.com/,moda,vivara,pulseiras,joias,cara,acessorios
-0322,Pandora,900,https://www.pandora.com/,moda,acessorios,cara,pulseiras,joias,pandora
-0224,Hering,757,https://www.hering.com/,roupas,camisas,tecido,cara,hering,moda
-0225,Renner,133,https://www.renner.com/,roupas,renner,tecido,oculos,barato,etiqueta,camisas,moda
 0226,SergioK,234,https://www.sergiok.com/,roupas,tecido,etiqueta,graus,cara,aecio,sergiok
 0400,LinkedIn,556,https://www.linkedin.com/,social,linkedin,rede,foto,azul
 0401,Flickr,988,https://www.flickr.com/,flickr,foto,mouse,vermelho,social,amiguinho

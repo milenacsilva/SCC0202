@@ -12,7 +12,6 @@ Compílador GCC 7.5.0 com as flags -std=c99 -O1
 
 
 ## Instruções Para Uso
-
 Para realizar a compilação normal basta utilizar o comando `make` ou `make all`, depois para execução utiliza `make run`. É possível também utilizar `make debug` para realizar execução com informações de depuração extras fornecidas pelo _valgrind_.
 
 Depois de compilado e executado você será apresentado a seguinte tela incial:
@@ -34,28 +33,44 @@ O que você deseja fazer? (Digite o número equivalente ao comando)
 3 - Atualizar a relevância de um site
 4 - Adicionar uma palavra-chave a um site
 5 - Mostrar banco de dados
-6 - Finalizar o programa
+6 - Buscar palavra chave
+7 - Sugestão de sites
+8 - Finalizar o programa
 ```
 
-A seguir, disponibilizamos a tabela explicando cada uma das funções/operações disponiveis:
+## Funcionalidades Extras
+* **Inserção de sites a partir de um csv**: mesmo após a inicialização do programa, pode-se adicionar multiplos sites de uma vez no formato csv 
+* **Mostrar o banco de dados**: mostra todos os sites contidos no bot, na ordem de sua chave
+* **Salvar nova lista de sites ao finalizar programa**: Pode-se salvar toda a lista de sites gerada durante a execução como um arquivo csv. 
 
-| Comando      | Função | Complexidade |
-| :---        | --- |    :----: |
-| Inserir site manualmente | Permite a inserção de um novo site diretamente pelo `stdin`, com as entradas fornecidas uma por uma pelo usuário | (Inserção ordenada): O(n) |
-| Inserir sites a partir de um csv    | Permite a inserção de novos sites passado o nome de outro arquivo csv. Vale ressaltar que os sites antigos continuam no programa. Dito isso, essa é só uma maneira simplificada para o usuário inserir vários sites de uma vez | (Inserção ordenada): O(n) |
-| Remover site   | Remove um único site passado sua chave     | (busca necessária): O(n) |
-| Atualizar a relevância de um site   | Modifica a relevância de um site passado sua chave e um novo valor     | (busca necessária): O(n) |
-| Adicionar uma palavra-chave a um site   | Adiciona uma nova palavra chave a um site passado sua chave e a palavra chave a ser adicionada, apenas se o site ainda não ultrapassou o limite de palavras chave|  (busca necessária) : O(n) |
-| Mostrar banco de dados   | Comando que não foi pedido nas especificações do projeto, mas permite vizualização fácil de todas as entradas no projeto    |
-| Finalizar o programa   | Finaliza o programa, dando a oportunidade do usuário salvar o estado atual do banco de dados     |
+## Estruturas Utilizadas
+
+### Estrutura principal
+Para a estrutura principal, foi utilizado uma árvore `Avl`, já que, tratando-se de uma árvore de busca auto-balanceada, ela mantêm o custo das operações constante.
+
+### Estrutura de retorno p/ busca de palavra chave e sugestão de sites
+Para o retorno dessas funções, foi se utilizado uma `Lista Encadeada Simples` visto que precisamos ordená-la por relevância (a utilização de uma avl não seria possível pois diferentes sites podem ter a mesma relevância). Nesse sentido, para não precisarmos trocar todos os sites de lugar, foi utilizado uma inserção ordenada. Além disso, como as únicas operações que temos que fazer nessa estrutura é inserir ordenado, printar os sites e deletar a instância criada, um encadeamento simples foi o suficiente. Por fim, considerando que não sabemos o total de sites a serem adicionados, foi utilizado alocaçâo dinâmica. 
+
+### Estrutura auxiliar para a sugestão de sites
+Para auxiliar a sugestão de sites, utilizamos uma `Trie` ou ainda `Árvore de prefixos`. O motivo de utilização dessa estrutura foi que, mesmo utilizando bastante memória, todas as operações tem uma complexidade de tempo `O(m)` onde `m` é o tamanho da palavra chave (que, segundo as especificações da primeira parte do projeto é no máximo 50).
+
+## Novas funções
+
+### Buscar palavra chave
+Para buscar os sites contendo uma palavra-chave, rodamos por toda a `Avl` (`O(n)`) e a cada site contendo a palavra, inserimos ele na lista ordenado por sua relevância. Assim, no pior caso temos uma complexidade de tempo de `O(n²)`.
+
+### Sugestão de sites
+Primeiramente, rodamos busca de palavra-chave com a palavra-chave base (`O(n²)`) e rodamos pela lista retornada. Se um site conter ela, rodados por todas suas palavras chaves e adicionamos na `Trie` (`O(10m)`, com `m` sendo o tamanho das palavras-chaves); totalizando  uma complexidade assíntótica de `O(n)` para a primeira parte. Após isso, rodamos novamente por todos os sites da `Avl` (`O(n)`) e para cada site, rodados por todas as suas palavras-chaves e vemos se alguma delas está na `Trie` (`O(10m)`, com `m` sendo o tamanho das palavras-chaves). Se estiver, adicionamos o site a lista de sugestões, ordenado por sua relevância (`O(n)`). Assim no final de tudo, temos uma complexidade de tempo `O(n²)`.
 
 
-## Estruturas e justificativas
-
-No projeto foi utilizado **Lista Encadeada Simples** por ser mais eficiente no quesito de ordenação, já que não precisamos trocar todos os sites de lugar para fazer inserção ordenada (pedida nas especificações do projeto). Dito isso, para as outra operações envolvendo busca, foi utilizada uma **sequencial simples** devido a estrutura  escolhida. Nesse sentido, é possível perceber que chegamos em um impasse: a inserção na lista encadeada de maneira ordenada é mais eficiente, porém ao utilizar esse tipo de estrutura perdemos a possibilidade de usar uma busca binária. Numa futura remodelação do projeto, idealmente seria aplicado uma àrvore binária de busca para resolver esse dilema, porém como ainda não vimos esse método, decidimos focar na inserção de dados e, logo, na lista encadeada.
-
-Decidimos pedir como primeiro input um arquivo incial com os sites e manter como possibilidade a adição de arquivos extras no resto da execução para deixar mais "_user friendly_". Além disso, foi necessário adicionar nossas versões dos comandos strdup e strndup, já que esses não são padronizados pelo C99 mas são úteis para nossa implementação.
+## Análise Assíntótica das Operações
+* **Inserção de sites dado uma chave**: `O(log n)`
+* **Busca de sites dado uma chave**: `O(log n)`
+* **Remover site dado um chave**: `O(log(n))`
+* **Adicionar uma palavra-chave | Atualizar a relevância de um site**: `O(log(n))` - visto que a operação de sub-rotina é uma busca 
+* **Mostrar banco de dados**: `O(n)`
+* **Buscar palavra-chave**: `O(n²)`
+* **Sugestão de Sites**: `O(n²)`
 
 ## Modularização
-
-Separamos as funções em 4 duplas de arquivo: utils.h, site.h, commands.h e site_list.h. **site.h** seria equivalente ao **TAD item** dos trabalhos anteriores; o **site_list.h**, a implementação de uma lista ligada; o **utils.h** seriam funções genéricas que não encaixariam nos grupos anteriores, mas que seriam utilizados no decorrer do código (O.b.s.: é bom ressaltar que o intuito desse arquivo não é ser um TAD e sim um módulo de operações auxiliares); e o **mini_google_bot.h** que une todos os comandos oferecidos e a implementação do bot em si. Por fim, temos o arquivo **main.c** que apenas chama os comandos do bot
+Temos duas bibliotecas auxiliares com funções genéricas para lidar com leitura e arquivos: utils.h e parser.h (O.b.s.: é bom ressaltar que o intuito desses arquivos não é ser um TAD e sim módulos de operações auxiliares). Temos também 4 estruturas de dados: avl.h (`Estrura Principal`), list.h (`Estrutura de retorno p/ busca de palavra chave e sugestão de sites`), trie.h (`Estrutura auxiliar para a sugestão de sites`) e site.h (Correspondente ao TAD item). Por fim, temos o mini_google_bot.h que une todos os comandos oferecidos e a main.c que apenas chama os comandos do bot.
